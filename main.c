@@ -77,16 +77,34 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
   return OK;
 }
 
+const char *signal_to_name(enum signals signal)
+{
+  switch(signal) {
+  case OK: return "OK";
+  case STACK_OVERFLOW: return "STACK_OVERFLOW";
+  case STACK_UNDERFLOW: return "STACK_UNDERFLOW";
+  case INVALID_JUMP_POSITION: return "INVALID_JUMP_POSITION";
+  }
+  assert(0 || "Unreacheable");
+  return "";
+}
+
 void execute_program(vm_instance_t *vm)
 {
   size_t max_execution_ticks = 2000;
 
   while (vm->sp < vm->program.number_of_instructions && max_execution_ticks)
   {
-    execute_inst(vm, &vm->program.instructions[vm->sp]);
+    enum signals signal = execute_inst(vm, &vm->program.instructions[vm->sp]);
+
+    if (signal != OK) {
+      printf("Execução interrompida erro %s\n", signal_to_name(signal));
+      goto end;
+    }
     max_execution_ticks--;
   }
 
+end:
   printf("ticks %ld\n", 2000 - max_execution_ticks);
 }
 
@@ -130,6 +148,26 @@ int main()
   execute_program(&vm);
 
   assert(vm.index == 3 && "O programa deveria deixar três valores na stack");
+
+  dump_stack_memory(&vm);
+}
+
+{
+  inst_t instructions[] = {
+    INST(PUSH, 1),
+    INST(PUSH, 0),
+    INST(PUSH, 0),
+    INST(PLUS, 0),
+    INST(JUMP, 0),
+  };
+
+  vm_instance_t vm = {0};
+  vm.program = (program_t) {
+    .instructions = (inst_t *) &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
 
   dump_stack_memory(&vm);
 }
