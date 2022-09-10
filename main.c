@@ -17,12 +17,14 @@ typedef uint8_t word_t;
 typedef enum instructions {
   INST_PLUS,
   INST_PUSH,
+  INST_JUMP,
 } instructions_t;
 
 enum signals {
   OK,
   STACK_OVERFLOW,
   STACK_UNDERFLOW,
+  INVALID_JUMP_POSITION
 };
 
 typedef struct inst {
@@ -56,10 +58,15 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     vm->stack[vm->index++] = inst->operand;
   break;
   case INST_PLUS:
-     if (vm->index < 2) return STACK_UNDERFLOW;
-     vm->index -= 2;
-     vm->stack[vm->index] =  vm->stack[vm->index] + vm->stack[vm->index + 1];
-     vm->index++;
+    if (vm->index < 2) return STACK_UNDERFLOW;
+    vm->index -= 2;
+    vm->stack[vm->index] =  vm->stack[vm->index] + vm->stack[vm->index + 1];
+    vm->index++;
+  break;
+  case INST_JUMP:
+    if (inst->operand >= vm->program.number_of_instructions) return INVALID_JUMP_POSITION;
+    vm->sp = inst->operand;
+    return OK;
   break;
   default:
     assert(0 || "Unreacheable");
@@ -72,10 +79,15 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
 
 void execute_program(vm_instance_t *vm)
 {
-  while (vm->sp < vm->program.number_of_instructions)
+  size_t max_execution_ticks = 2000;
+
+  while (vm->sp < vm->program.number_of_instructions && max_execution_ticks)
   {
     execute_inst(vm, &vm->program.instructions[vm->sp]);
+    max_execution_ticks--;
   }
+
+  printf("ticks %ld\n", 2000 - max_execution_ticks);
 }
 
 void dump_stack_memory(vm_instance_t *vm)
