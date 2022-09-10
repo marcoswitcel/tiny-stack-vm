@@ -10,6 +10,10 @@
 
 typedef uint8_t word_t;
 
+/**
+ * @brief Conjunto de intruções suportadas
+ * 
+ */
 typedef enum instructions {
   INST_PLUS,
   INST_PUSH,
@@ -32,10 +36,16 @@ static inline inst_t inst(instructions_t inst, uint8_t operand)
   return (inst_t) { .type = inst, .operand = operand };
 }
 
+typedef struct program {
+  inst_t *instructions;
+  size_t number_of_instructions;
+} program_t;
 
 typedef struct vm_instance {
   word_t stack[STACK_MAX_SIZE];
   uint16_t index;
+  size_t sp;
+  program_t program;
 } vm_instance_t;
 
 enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
@@ -43,7 +53,6 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
   switch(inst->type) {
   case INST_PUSH:
     if (vm->index >= STACK_MAX_SIZE) return STACK_OVERFLOW;
-    // @TODO não seguro, terminar de validar stack antes de fazer o push
     vm->stack[vm->index++] = inst->operand;
   break;
   case INST_PLUS:
@@ -56,7 +65,17 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     assert(0 || "Unreacheable");
   }
 
+  vm->sp++;
+
   return OK;
+}
+
+void execute_program(vm_instance_t *vm)
+{
+  while (vm->sp < vm->program.number_of_instructions)
+  {
+    execute_inst(vm, &vm->program.instructions[vm->sp]);
+  }
 }
 
 void dump_stack_memory(vm_instance_t *vm)
@@ -77,18 +96,24 @@ void dump_stack_memory(vm_instance_t *vm)
 
 int main()
 {
+
+  inst_t instructions[] = {
+    INST(PUSH, 97),
+    INST(PUSH, 97),
+    INST(PUSH, 3),
+    INST(PLUS, 0),
+    INST(PUSH, 97),
+  };
+
   vm_instance_t vm = {0};
-  inst_t inst_a = INST(PUSH, 97);
-  inst_t inst_b = INST(PUSH, 3);
-  inst_t inst_plus = INST(PLUS, 0);
-  
-  execute_inst(&vm, &inst_a);
-  execute_inst(&vm, &inst_a);
-  execute_inst(&vm, &inst_b);
-  execute_inst(&vm, &inst_plus);
-  execute_inst(&vm, &inst_a);
+  vm.program = (program_t) {
+    .instructions = &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
 
   dump_stack_memory(&vm);
-  printf("stack: %s ", (const char *) &vm.stack);
+
   return 0;
 }
