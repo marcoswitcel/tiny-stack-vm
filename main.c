@@ -80,12 +80,12 @@ void execute_program(vm_instance_t *vm)
 
 void dump_stack_memory(vm_instance_t *vm)
 {
-    printf("Stack:\n");
+    printf("Stack Dump:\n");
     if (vm->index)
     {
       for (uint16_t i = 0; i < vm->index; i++)
       {
-        printf("  %d\n", vm->stack[i]);
+        printf(" %d: %d\n", i, vm->stack[i]);
       }
     }
     else
@@ -97,6 +97,10 @@ void dump_stack_memory(vm_instance_t *vm)
 int main()
 {
 
+/**
+ * @brief Primeiras intruções funcionais
+ */
+{
   inst_t instructions[] = {
     INST(PUSH, 97),
     INST(PUSH, 97),
@@ -107,13 +111,17 @@ int main()
 
   vm_instance_t vm = {0};
   vm.program = (program_t) {
-    .instructions = &instructions,
+    .instructions = (inst_t *) &instructions,
     .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
   };
 
   execute_program(&vm);
 
+  assert(vm.index == 3 && "O programa deveria deixar três valores na stack");
+
   dump_stack_memory(&vm);
+}
+  
 
   return 0;
 }
