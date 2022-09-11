@@ -162,8 +162,8 @@ int main()
 
 {
   /**
-   * @brief Fibonacci, porém como cara célula da stack tem 8 bits,
-   * não vamos muito longe nos cálculos
+   * @brief programa que gera a Sequência de Fibonacci, porém como cada célula da stack tem 8 bits,
+   * não vamos muito longe nos cálculos sem sofrermos overflow e a célula fazer um  "wrap around".
    */
   inst_t instructions[] = {
     INST(PUSH, 0),
