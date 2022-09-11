@@ -18,13 +18,15 @@ typedef enum instructions {
   INST_PLUS,
   INST_PUSH,
   INST_JUMP,
+  INST_DUP,
 } instructions_t;
 
 enum signals {
   OK,
   STACK_OVERFLOW,
   STACK_UNDERFLOW,
-  INVALID_JUMP_POSITION
+  INVALID_JUMP_POSITION,
+  INVALID_OPERAND,
 };
 
 typedef struct inst {
@@ -68,6 +70,11 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     vm->sp = inst->operand;
     return OK;
   break;
+  case INST_DUP:
+    if (inst->operand >= vm->index) return INVALID_OPERAND; // @TODO João, talvez um nome melhor
+    vm->stack[vm->index] = vm->stack[vm->index - inst->operand - 1];
+    vm->index++;
+  break;
   default:
     assert(0 || "Unreacheable");
   }
@@ -84,6 +91,7 @@ const char *signal_to_name(enum signals signal)
   case STACK_OVERFLOW: return "STACK_OVERFLOW";
   case STACK_UNDERFLOW: return "STACK_UNDERFLOW";
   case INVALID_JUMP_POSITION: return "INVALID_JUMP_POSITION";
+  case INVALID_OPERAND: return "INVALID_OPERAND";
   }
   assert(0 || "Unreacheable");
   return "";
@@ -91,7 +99,7 @@ const char *signal_to_name(enum signals signal)
 
 void execute_program(vm_instance_t *vm)
 {
-  size_t max_execution_ticks = 2000;
+  size_t max_execution_ticks = 75;
 
   while (vm->sp < vm->program.number_of_instructions && max_execution_ticks)
   {
@@ -105,7 +113,7 @@ void execute_program(vm_instance_t *vm)
   }
 
 end:
-  printf("ticks %ld\n", 2000 - max_execution_ticks);
+  printf("ticks %ld\n", 75 - max_execution_ticks);
 }
 
 void dump_stack_memory(vm_instance_t *vm)
@@ -172,6 +180,27 @@ int main()
   dump_stack_memory(&vm);
 }
   
+{
+  inst_t instructions[] = {
+    INST(PUSH, 3),
+    INST(PUSH, 4),
+    INST(DUP, 0),
+    INST(DUP, 2),
+  };
+
+  vm_instance_t vm = {0};
+  vm.program = (program_t) {
+    .instructions = (inst_t *) &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
+
+  assert(vm.stack[2] == 4 && "O valor 2 deveria estar nesse endereço");
+  assert(vm.stack[3] == 3 && "O valor 3 deveria estar nesse endereço");
+
+  dump_stack_memory(&vm);
+}
 
   return 0;
 }
