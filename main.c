@@ -161,12 +161,17 @@ int main()
 }
 
 {
+  /**
+   * @brief Fibonacci, porém como cara célula da stack tem 8 bits,
+   * não vamos muito longe nos cálculos
+   */
   inst_t instructions[] = {
+    INST(PUSH, 0),
     INST(PUSH, 1),
-    INST(PUSH, 0),
-    INST(PUSH, 0),
+    INST(DUP, 1),
+    INST(DUP, 1),
     INST(PLUS, 0),
-    INST(JUMP, 0),
+    INST(JUMP, 2),
   };
 
   vm_instance_t vm = {0};
