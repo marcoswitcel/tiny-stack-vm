@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-#define STACK_MAX_SIZE 1000
+#define STACK_MAX_SIZE 256
 
 #define INST(name, value) ((inst_t) { .type = INST_##name, .operand = value })
 
