@@ -19,6 +19,12 @@ typedef enum instructions {
   INST_PUSH,
   INST_JUMP,
   INST_DUP,
+  /**
+   * @TODO João, programa pra testar o jump not zero ou jump if zero pode ser um
+   * programa que preenche a stack com números de 10 à 1
+   * @TODO João, falta um comando pra realizar a subtração
+   */
+  INST_JUMP_NOT_ZERO,
 } instructions_t;
 
 enum signals {
@@ -56,6 +62,7 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
 {
   switch(inst->type) {
   case INST_PUSH:
+    // @TODO João, problema aqui, nunca vai detectar o overflow
     if (vm->index >= STACK_MAX_SIZE) return STACK_OVERFLOW;
     vm->stack[vm->index++] = inst->operand;
   break;
@@ -69,6 +76,13 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     if (inst->operand >= vm->program.number_of_instructions) return INVALID_JUMP_POSITION;
     vm->sp = inst->operand;
     return OK;
+  break;
+  case INST_JUMP_NOT_ZERO:
+    if (inst->operand >= vm->program.number_of_instructions) return INVALID_JUMP_POSITION;
+    if (vm->stack[vm->index - 1]) {
+      vm->sp = inst->operand;
+      return OK;
+    }
   break;
   case INST_DUP:
     if (inst->operand >= vm->index) return INVALID_OPERAND; // @TODO João, talvez um nome melhor
@@ -203,6 +217,31 @@ int main()
 
   assert(vm.stack[2] == 4 && "O valor 2 deveria estar nesse endereço");
   assert(vm.stack[3] == 3 && "O valor 3 deveria estar nesse endereço");
+
+  dump_stack_memory(&vm);
+}
+
+{
+  inst_t instructions[] = {
+    INST(PUSH, 1),
+    INST(PUSH, 0),
+    INST(DUP, 1),
+    INST(JUMP_NOT_ZERO, 2),
+    INST(PUSH, 5),
+  };
+
+  vm_instance_t vm = {0};
+  vm.program = (program_t) {
+    .instructions = (inst_t *) &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
+
+  assert(vm.stack[2] == 1 && "O valor 1 deveria estar nesse endereço");
+  assert(vm.stack[3] == 0 && "O valor 0 deveria estar nesse endereço");
+  assert(vm.stack[4] == 5 && "O valor 5 deveria estar nesse endereço");
+  assert(vm.stack[5] == 0 && "O valor 0 deveria estar nesse endereço");
 
   dump_stack_memory(&vm);
 }
