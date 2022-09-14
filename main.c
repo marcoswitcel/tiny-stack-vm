@@ -16,12 +16,14 @@ typedef uint8_t word_t;
  */
 typedef enum instructions {
   INST_PLUS,
+  INST_SUB,
   INST_PUSH,
   INST_JUMP,
   INST_DUP,
   /**
    * @TODO João, programa pra testar o jump not zero ou jump if zero pode ser um
    * programa que preenche a stack com números de 10 à 1
+   * @TODO João, implementar um comando pop
    * @TODO João, falta um comando pra realizar a subtração
    */
   INST_JUMP_NOT_ZERO,
@@ -70,6 +72,12 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     if (vm->index < 2) return STACK_UNDERFLOW;
     vm->index -= 2;
     vm->stack[vm->index] =  vm->stack[vm->index] + vm->stack[vm->index + 1];
+    vm->index++;
+  break;
+  case INST_SUB:
+    if (vm->index < 2) return STACK_UNDERFLOW;
+    vm->index -= 2;
+    vm->stack[vm->index] =  vm->stack[vm->index] - vm->stack[vm->index + 1];
     vm->index++;
   break;
   case INST_JUMP:
@@ -242,6 +250,29 @@ int main()
   assert(vm.stack[3] == 0 && "O valor 0 deveria estar nesse endereço");
   assert(vm.stack[4] == 5 && "O valor 5 deveria estar nesse endereço");
   assert(vm.stack[5] == 0 && "O valor 0 deveria estar nesse endereço");
+
+  dump_stack_memory(&vm);
+}
+
+{
+  inst_t instructions[] = {
+    INST(PUSH, 10),
+    INST(DUP, 0),
+    INST(PUSH, 1),
+    INST(SUB, 0),
+    INST(JUMP_NOT_ZERO, 1)
+  };
+
+  vm_instance_t vm = {0};
+  vm.program = (program_t) {
+    .instructions = (inst_t *) &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
+
+  assert(vm.stack[0] == 10 && "O valor 10 deveria estar nesse endereço");
+  assert(vm.stack[9] == 1 && "O valor 1 deveria estar nesse endereço");
 
   dump_stack_memory(&vm);
 }
