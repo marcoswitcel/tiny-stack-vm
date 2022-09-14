@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-#define STACK_MAX_SIZE 256
+#define STACK_MAX_SIZE 255
 
 #define INST(name, value) ((inst_t) { .type = INST_##name, .operand = value })
 
@@ -65,6 +65,7 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
   switch(inst->type) {
   case INST_PUSH:
     // @TODO João, problema aqui, nunca vai detectar o overflow
+    // @NOTE problema parcialmente resolvido com o valor máximo de 255 pra stack, validar se ainda há algum efeito colateral
     if (vm->index >= STACK_MAX_SIZE) return STACK_OVERFLOW;
     vm->stack[vm->index++] = inst->operand;
   break;
