@@ -20,6 +20,8 @@ typedef enum instructions {
   INST_PUSH,
   INST_JUMP,
   INST_DUP,
+  // O Comando pop apenas decrementa o ponteiro da stack, ele não zera a celula liberada
+  INST_POP,
   /**
    * @TODO João, programa pra testar o jump not zero ou jump if zero pode ser um
    * programa que preenche a stack com números de 10 à 1
@@ -97,6 +99,11 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     if (inst->operand >= vm->index) return INVALID_OPERAND; // @TODO João, talvez um nome melhor
     vm->stack[vm->index] = vm->stack[vm->index - inst->operand - 1];
     vm->index++;
+  break;
+  case INST_POP:
+    if (vm->index < 1) return STACK_UNDERFLOW;
+    // @NOTE João, por hora decidi não zerar a celula "liberada"
+    vm->index--;
   break;
   default:
     assert(0 || "Unreacheable");
@@ -274,6 +281,28 @@ int main()
 
   assert(vm.stack[0] == 10 && "O valor 10 deveria estar nesse endereço");
   assert(vm.stack[9] == 1 && "O valor 1 deveria estar nesse endereço");
+
+  dump_stack_memory(&vm);
+}
+
+{
+  inst_t instructions[] = {
+    INST(PUSH, 10),
+    INST(PUSH, 9),
+    INST(POP, 0),
+    INST(PUSH, 8)
+  };
+
+  vm_instance_t vm = {0};
+  vm.program = (program_t) {
+    .instructions = (inst_t *) &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
+
+  assert(vm.stack[0] == 10 && "O valor 10 deveria estar nesse endereço");
+  assert(vm.stack[1] == 8 && "O valor 8 deveria estar nesse endereço");
 
   dump_stack_memory(&vm);
 }
