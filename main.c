@@ -15,7 +15,13 @@ typedef uint8_t word_t;
  * 
  */
 typedef enum instructions {
+  /**
+   * @note wrap around é o comportamento esperado para overflow
+   */
   INST_PLUS,
+  /**
+   * @note wrap around é o comportamento esperado para undeflow
+   */
   INST_SUB,
   INST_PUSH,
   INST_JUMP,
