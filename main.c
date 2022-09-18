@@ -35,6 +35,7 @@ typedef enum instructions {
    * @TODO João, falta um comando pra realizar a subtração
    */
   INST_JUMP_NOT_ZERO,
+  INST_JUMP_ZERO,
 } instructions_t;
 
 enum signals {
@@ -97,6 +98,13 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
   case INST_JUMP_NOT_ZERO:
     if (inst->operand >= vm->program.number_of_instructions) return INVALID_JUMP_POSITION;
     if (vm->stack[vm->index - 1]) {
+      vm->sp = inst->operand;
+      return OK;
+    }
+  break;
+  case INST_JUMP_ZERO:
+    if (inst->operand >= vm->program.number_of_instructions) return INVALID_JUMP_POSITION;
+    if (vm->stack[vm->index - 1] == 0) {
       vm->sp = inst->operand;
       return OK;
     }
@@ -309,6 +317,30 @@ int main()
 
   assert(vm.stack[0] == 10 && "O valor 10 deveria estar nesse endereço");
   assert(vm.stack[1] == 8 && "O valor 8 deveria estar nesse endereço");
+
+  dump_stack_memory(&vm);
+}
+
+{
+  inst_t instructions[] = {
+    INST(PUSH, 10),
+    INST(JUMP_ZERO, 5),
+    INST(PUSH, 1),
+    INST(SUB, 0),
+    INST(JUMP, 1),
+    INST(PUSH, 23),
+  };
+
+  vm_instance_t vm = {0};
+  vm.program = (program_t) {
+    .instructions = (inst_t *) &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
+
+  assert(vm.stack[0] == 0 && "O valor 0 deveria estar nesse endereço");
+  assert(vm.stack[1] == 23 && "O valor 23 deveria estar nesse endereço");
 
   dump_stack_memory(&vm);
 }
