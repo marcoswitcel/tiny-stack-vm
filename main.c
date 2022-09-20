@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
@@ -182,6 +183,29 @@ void dump_stack_memory(vm_instance_t *vm)
   {
     printf("  [stack vazia]");
   }
+}
+
+program_t read_program_from_file(const char *file_path)
+{
+  FILE *fd = fopen(file_path, "rb");
+  if (fd == NULL) {
+    fprintf(stderr, "erro abrindo o arquivo: %s", file_path);
+    exit(EXIT_FAILURE);
+  }
+  fseek(fd, 0, SEEK_END);
+  long file_size = ftell(fd);
+  fseek(fd, 0, SEEK_SET); // Esqueci de rebobinar
+
+  assert(file_size % sizeof(inst_t) == 0 && "Precisa ser 0 para poder ser um arquivo válido");
+  void *buffer = malloc(file_size);
+  fread(buffer, file_size, 1, fd);
+
+  fclose(fd);
+
+  return (program_t) {
+    .instructions = (inst_t *) buffer,
+    .number_of_instructions = file_size / sizeof(inst_t),
+  };
 }
 
 void tests()
@@ -386,9 +410,22 @@ void tests()
 }
 }
 
-int main()
+int main(int argc, const char *argv[])
 {
   tests();
-  
-  return 0;
+
+  assert(sizeof(instructions_t) == 1 && "Enums de 1 byte com -fshort-enums não habilitado");
+
+  if (argc < 2) {
+    printf("Forma de uso:\nvm <caminho-para-o-programa>\n");
+  }
+
+  printf("---- LOADED program -----\n");
+  vm_instance_t vm = {0};
+  vm.program = read_program_from_file(argv[1]);
+
+  execute_program(&vm);
+  dump_stack_memory(&vm);
+
+  return EXIT_SUCCESS;
 }
