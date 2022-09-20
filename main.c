@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <assert.h>
+#include <stdbool.h>
 
 #define STACK_MAX_SIZE 255
 
@@ -33,6 +34,11 @@ typedef enum instructions {
   INST_JUMP_ZERO,
   INST_GREATER_THAN,
   INST_LOWER_THAN,
+  /**
+   * @todo João, há diversas instruções que podem ser adicionadas
+   * - write -- Escreve para o stdout
+   */
+  INST_HALT,
 } instructions_t;
 
 enum signals {
@@ -64,6 +70,7 @@ typedef struct vm_instance {
   uint16_t index;
   size_t ip;
   program_t program;
+  bool halted;
 } vm_instance_t;
 
 enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
@@ -128,6 +135,10 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     // @NOTE João, por hora decidi não zerar a celula "liberada"
     vm->index--;
   break;
+  case INST_HALT:
+    vm->halted = true;
+    vm->ip++;
+  break;
   default:
     assert(0 || "Unreacheable");
   }
@@ -160,6 +171,9 @@ void execute_program(vm_instance_t *vm)
 
     if (signal != OK) {
       printf("Execução interrompida erro %s\n", signal_to_name(signal));
+      goto end;
+    }
+    if (vm->halted) {
       goto end;
     }
     max_execution_ticks--;
@@ -408,6 +422,31 @@ void tests()
 
   dump_stack_memory(&vm);
 }
+
+{
+  inst_t instructions[] = {
+    INST(PUSH, 10),
+    INST(PUSH, 5),
+    INST(HALT, 0),
+    INST(PUSH, 23),
+  };
+
+  vm_instance_t vm = {0};
+  vm.program = (program_t) {
+    .instructions = (inst_t *) &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
+
+  assert(vm.stack[0] == 10 && "O valor 10 deveria estar nesse endereço");
+  assert(vm.stack[1] == 5 && "O valor 5 deveria estar nesse endereço");
+  assert(vm.index == 2 && "O tamanho da stack deveria ser 2");
+  assert(vm.stack[2] == 0 && "O valor 0 deveria estar nesse endereço");
+
+  dump_stack_memory(&vm);
+}
+
 }
 
 int main(int argc, const char *argv[])
