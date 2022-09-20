@@ -30,6 +30,8 @@ typedef enum instructions {
   INST_POP,
   INST_JUMP_NOT_ZERO,
   INST_JUMP_ZERO,
+  INST_GREATER_THAN,
+  INST_LOWER_THAN,
 } instructions_t;
 
 enum signals {
@@ -82,6 +84,18 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     if (vm->index < 2) return STACK_UNDERFLOW;
     vm->index -= 2;
     vm->stack[vm->index] =  vm->stack[vm->index] - vm->stack[vm->index + 1];
+    vm->index++;
+  break;
+  case INST_GREATER_THAN:
+    if (vm->index < 2) return STACK_UNDERFLOW;
+    vm->index -= 2;
+    vm->stack[vm->index] =  vm->stack[vm->index] > vm->stack[vm->index + 1];
+    vm->index++;
+  break;
+  case INST_LOWER_THAN:
+    if (vm->index < 2) return STACK_UNDERFLOW;
+    vm->index -= 2;
+    vm->stack[vm->index] =  vm->stack[vm->index] < vm->stack[vm->index + 1];
     vm->index++;
   break;
   case INST_JUMP:
@@ -335,6 +349,38 @@ int main()
 
   assert(vm.stack[0] == 0 && "O valor 0 deveria estar nesse endereço");
   assert(vm.stack[1] == 23 && "O valor 23 deveria estar nesse endereço");
+
+  dump_stack_memory(&vm);
+}
+
+{
+  inst_t instructions[] = {
+    INST(PUSH, 10),
+    INST(PUSH, 5),
+    INST(GREATER_THAN, 0),
+    INST(PUSH, 5),
+    INST(PUSH, 10),
+    INST(GREATER_THAN, 0),
+    INST(PUSH, 10),
+    INST(PUSH, 5),
+    INST(LOWER_THAN, 0),
+    INST(PUSH, 5),
+    INST(PUSH, 10),
+    INST(LOWER_THAN, 0),
+  };
+
+  vm_instance_t vm = {0};
+  vm.program = (program_t) {
+    .instructions = (inst_t *) &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
+
+  assert(vm.stack[0] == 1 && "O valor 1 deveria estar nesse endereço");
+  assert(vm.stack[1] == 0 && "O valor 0 deveria estar nesse endereço");
+  assert(vm.stack[2] == 0 && "O valor 0 deveria estar nesse endereço");
+  assert(vm.stack[3] == 1 && "O valor 1 deveria estar nesse endereço");
 
   dump_stack_memory(&vm);
 }
