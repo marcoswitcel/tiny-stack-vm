@@ -34,11 +34,8 @@ typedef enum instructions {
   INST_JUMP_ZERO,
   INST_GREATER_THAN,
   INST_LOWER_THAN,
-  /**
-   * @todo João, há diversas instruções que podem ser adicionadas
-   * - write -- Escreve para o stdout
-   */
   INST_HALT,
+  INST_WRITE,
 } instructions_t;
 
 enum signals {
@@ -137,6 +134,9 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
   break;
   case INST_HALT:
     vm->halted = true;
+  break;
+  case INST_WRITE:
+    printf("%c", vm->stack[vm->index - 1]);
   break;
   default:
     assert(0 || "Unreacheable");
@@ -442,6 +442,36 @@ void tests()
   assert(vm.stack[1] == 5 && "O valor 5 deveria estar nesse endereço");
   assert(vm.index == 2 && "O tamanho da stack deveria ser 2");
   assert(vm.stack[2] == 0 && "O valor 0 deveria estar nesse endereço");
+
+  dump_stack_memory(&vm);
+}
+
+{
+  inst_t instructions[] = {
+    INST(PUSH, 97),
+    INST(JUMP, 3),
+    INST(POP, 0),
+    INST(WRITE, 0),
+    INST(PUSH, 1),
+    INST(PLUS, 0),
+    INST(DUP, 0),
+    INST(PUSH, 105),
+    INST(LOWER_THAN, 0),
+    INST(JUMP_NOT_ZERO, 2),
+  };
+
+  vm_instance_t vm = {0};
+  vm.program = (program_t) {
+    .instructions = (inst_t *) &instructions,
+    .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+  };
+
+  execute_program(&vm);
+
+  assert(vm.stack[0] == 105 && "O valor 105 deveria estar nesse endereço");
+  assert(vm.stack[1] == 0 && "O valor 0 deveria estar nesse endereço");
+  assert(vm.stack[2] == 105 && "O valor 105 deveria estar nesse endereço"); //  Esse 105 não é apagado pelo comando lower_than
+  assert(vm.index == 2 && "O tamanho da stack deveria ser 2");
 
   dump_stack_memory(&vm);
 }
