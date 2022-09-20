@@ -59,7 +59,7 @@ typedef struct program {
 typedef struct vm_instance {
   word_t stack[STACK_MAX_SIZE];
   uint16_t index;
-  size_t sp;
+  size_t ip;
   program_t program;
 } vm_instance_t;
 
@@ -86,20 +86,20 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
   break;
   case INST_JUMP:
     if (inst->operand >= vm->program.number_of_instructions) return INVALID_JUMP_POSITION;
-    vm->sp = inst->operand;
+    vm->ip = inst->operand;
     return OK;
   break;
   case INST_JUMP_NOT_ZERO:
     if (inst->operand >= vm->program.number_of_instructions) return INVALID_JUMP_POSITION;
     if (vm->stack[vm->index - 1]) {
-      vm->sp = inst->operand;
+      vm->ip = inst->operand;
       return OK;
     }
   break;
   case INST_JUMP_ZERO:
     if (inst->operand >= vm->program.number_of_instructions) return INVALID_JUMP_POSITION;
     if (vm->stack[vm->index - 1] == 0) {
-      vm->sp = inst->operand;
+      vm->ip = inst->operand;
       return OK;
     }
   break;
@@ -117,7 +117,7 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     assert(0 || "Unreacheable");
   }
 
-  vm->sp++;
+  vm->ip++;
 
   return OK;
 }
@@ -139,9 +139,9 @@ void execute_program(vm_instance_t *vm)
 {
   size_t max_execution_ticks = 75;
 
-  while (vm->sp < vm->program.number_of_instructions && max_execution_ticks)
+  while (vm->ip < vm->program.number_of_instructions && max_execution_ticks)
   {
-    enum signals signal = execute_inst(vm, &vm->program.instructions[vm->sp]);
+    enum signals signal = execute_inst(vm, &vm->program.instructions[vm->ip]);
 
     if (signal != OK) {
       printf("Execução interrompida erro %s\n", signal_to_name(signal));
