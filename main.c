@@ -137,7 +137,6 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
   break;
   case INST_HALT:
     vm->halted = true;
-    vm->ip++;
   break;
   default:
     assert(0 || "Unreacheable");
