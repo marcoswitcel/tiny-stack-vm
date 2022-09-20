@@ -28,12 +28,6 @@ typedef enum instructions {
   INST_DUP,
   // O Comando pop apenas decrementa o ponteiro da stack, ele não zera a celula liberada
   INST_POP,
-  /**
-   * @TODO João, programa pra testar o jump not zero ou jump if zero pode ser um
-   * programa que preenche a stack com números de 10 à 1
-   * @TODO João, implementar um comando pop
-   * @TODO João, falta um comando pra realizar a subtração
-   */
   INST_JUMP_NOT_ZERO,
   INST_JUMP_ZERO,
 } instructions_t;
@@ -162,18 +156,18 @@ end:
 
 void dump_stack_memory(vm_instance_t *vm)
 {
-    printf("Stack Dump:\n");
-    if (vm->index)
+  printf("Stack Dump:\n");
+  if (vm->index)
+  {
+    for (uint16_t i = 0; i < vm->index; i++)
     {
-      for (uint16_t i = 0; i < vm->index; i++)
-      {
-        printf(" %d: %d\n", i, vm->stack[i]);
-      }
+      printf(" %d: %d\n", i, vm->stack[i]);
     }
-    else
-    {
-      printf("  [stack vazia]");
-    }
+  }
+  else
+  {
+    printf("  [stack vazia]");
+  }
 }
 
 int main()
