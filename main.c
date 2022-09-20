@@ -184,7 +184,7 @@ void dump_stack_memory(vm_instance_t *vm)
   }
 }
 
-int main()
+void tests()
 {
 
 /**
@@ -384,6 +384,11 @@ int main()
 
   dump_stack_memory(&vm);
 }
+}
 
+int main()
+{
+  tests();
+  
   return 0;
 }
