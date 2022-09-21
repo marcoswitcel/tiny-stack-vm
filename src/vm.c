@@ -14,6 +14,13 @@ static inline inst_t inst(instructions_t inst, uint8_t operand)
   return (inst_t) { .type = inst, .operand = operand };
 }
 
+/**
+ * @brief Executa uma instrução na máquina virtual
+ * 
+ * @param vm 
+ * @param inst 
+ * @return enum signals 
+ */
 enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
 {
   switch(inst->type) {
