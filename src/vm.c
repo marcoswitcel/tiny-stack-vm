@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
-#include "./vm-definitions.h";
+#include "./vm-definitions.h"
 
 static inline inst_t inst(instructions_t inst, uint8_t operand)
 {
