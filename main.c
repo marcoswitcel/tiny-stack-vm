@@ -209,7 +209,10 @@ program_t read_program_from_file(const char *file_path)
   long file_size = ftell(fd);
   fseek(fd, 0, SEEK_SET); // Esqueci de rebobinar
 
-  assert(file_size % sizeof(inst_t) == 0 && "Precisa ser 0 para poder ser um arquivo válido");
+  if (!(file_size % sizeof(inst_t) == 0)) {
+    fprintf(stderr, "Número de bytes não bate : %s %d", __FILE__, __LINE__);
+    exit(EXIT_FAILURE);
+  }
   void *buffer = malloc(file_size);
   fread(buffer, file_size, 1, fd);
 
