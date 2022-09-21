@@ -13,3 +13,4 @@ https://stackoverflow.com/questions/14002954/c-programming-how-to-read-the-whole
 https://stackoverflow.com/questions/4879286/specifying-size-of-enum-type-in-c
 https://stackoverflow.com/questions/41328483/how-to-save-arraybuffer
 https://transang.me/edit-binary-file-with-vim-and-the-xxd-command/
+https://earthly.dev/blog/make-flags/

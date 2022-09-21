@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
 #include "./vm.c"
 
 void test_cases()
@@ -255,4 +259,11 @@ void test_cases()
     dump_stack_memory(&vm);
   }
 
+}
+
+int main()
+{
+  test_cases();
+
+  return EXIT_SUCCESS;
 }

@@ -1,5 +1,11 @@
-main: src/main.c
-	$(CC) src/main.c -o bin/a.out -Wall -Wextra -pedantic -Wswitch-enum -fshort-enums -std=c11
+CFLAGS = -Wall -Wextra -pedantic -Wswitch-enum -fshort-enums -std=c11
 
-run: main
+tests: src/test-cases.c
+	$(CC) $(CFLAGS) src/test-cases.c -o bin/t.out 
+
+main: src/main.c
+	$(CC) $(CFLAGS) src/main.c -o bin/a.out 
+
+run: tests main
+	./bin/t.out > ./bin/test.log
 	./bin/a.out ./samples/bin/push10-push5-plus.vmp

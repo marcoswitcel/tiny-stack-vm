@@ -3,13 +3,9 @@
 #include <assert.h>
 
 #include "./vm.c"
-#include "./test-cases.c"
-
 
 int main(int argc, const char *argv[])
 {
-  test_cases();
-
   static_assert(sizeof(instructions_t) == 1, "Enums de 1 byte com -fshort-enums não habilitado");
 
   if (argc < 2) {
