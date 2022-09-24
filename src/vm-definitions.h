@@ -15,7 +15,16 @@ typedef uint8_t word_t;
 
 /**
  * @brief Conjunto de intruções suportadas
+ * Resolvi anotar aqui alguns consensos que cheguei a respeito das instruções:
  * 
+ * -- Algumas instruções não fazem uso do valor do operador, porém, devem ser 
+ * normalizadas para receber um zero como valor do operador.
+ * -- Algumas instruções como o swap terão um valor padrão, o que quer dizer
+ * que na forma textual não sera necessário explicitar o valor. Exemplo: a
+ * instrução swap terá como valor padrão o número 1, porém, ela aceita valores
+ * de 0 à 255, embora se eles são validos ou não depende do tamanho da stack em
+ * runtime, e o valor zero em particular sempre será uma `noop` em termos de
+ * efeito na aplicação.
  */
 typedef enum instructions {
   /**
