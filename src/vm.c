@@ -99,7 +99,7 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     vm->stack[prevIndex] = currValue;
   break;
   default:
-    assert(0 || "Unreacheable");
+    return INVALID_INSTRUCTION;
   }
 
   vm->ip++;
@@ -111,6 +111,7 @@ const char *signal_to_name(enum signals signal)
 {
   switch(signal) {
   case OK: return "OK";
+  case INVALID_INSTRUCTION: return "INVALID_INSTRUCTION";
   case STACK_OVERFLOW: return "STACK_OVERFLOW";
   case STACK_UNDERFLOW: return "STACK_UNDERFLOW";
   case INVALID_JUMP_POSITION: return "INVALID_JUMP_POSITION";

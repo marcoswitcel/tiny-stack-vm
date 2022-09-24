@@ -42,6 +42,7 @@ typedef enum instructions {
 
 enum signals {
   OK,
+  INVALID_INSTRUCTION,
   STACK_OVERFLOW,
   STACK_UNDERFLOW,
   INVALID_JUMP_POSITION,
