@@ -37,6 +37,7 @@ typedef enum instructions {
   INST_LOWER_THAN,
   INST_HALT,
   INST_WRITE,
+  INST_SWAP,
 } instructions_t;
 
 enum signals {

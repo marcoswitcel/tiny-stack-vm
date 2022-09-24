@@ -89,6 +89,15 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
   case INST_WRITE:
     printf("%c", vm->stack[vm->index - 1]);
   break;
+  case INST_SWAP:
+    if (vm->index == 0 || inst->operand >= vm->index) return INVALID_OPERAND;
+    uint8_t topIndex = vm->index - 1;
+    uint8_t prevIndex = vm->index - (1 + inst->operand);
+    word_t currValue = vm->stack[topIndex];
+
+    vm->stack[topIndex] = vm->stack[prevIndex];
+    vm->stack[prevIndex] = currValue;
+  break;
   default:
     assert(0 || "Unreacheable");
   }

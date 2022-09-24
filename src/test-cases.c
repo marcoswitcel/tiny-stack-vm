@@ -259,6 +259,32 @@ void test_cases()
     dump_stack_memory(&vm);
   }
 
+  {
+    inst_t instructions[] = {
+      INST(PUSH, 97),
+      INST(PUSH, 98),
+      INST(SWAP, 1),
+      INST(PUSH, 99),
+      INST(SWAP, 1),
+      INST(PUSH, 25),
+      INST(SWAP, 3),
+    };
+
+    vm_instance_t vm = {0};
+    vm.program = (program_t) {
+      .instructions = (inst_t *) &instructions,
+      .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+    };
+
+    execute_program(&vm);
+
+    assert(vm.stack[0] == 25 && "O valor 25 deveria estar nesse endereço");
+    assert(vm.stack[1] == 99 && "O valor 99 deveria estar nesse endereço");
+    assert(vm.stack[2] == 97 && "O valor 97 deveria estar nesse endereço");
+    assert(vm.stack[3] == 98 && "O valor 98 deveria estar nesse endereço");
+
+    dump_stack_memory(&vm);
+  }
 }
 
 int main()
