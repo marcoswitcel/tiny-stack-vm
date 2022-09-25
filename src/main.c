@@ -3,10 +3,11 @@
 #include <assert.h>
 
 #include "./vm.c"
+#include "./compiler-requirements.h"
+
 
 int main(int argc, const char *argv[])
 {
-  static_assert(sizeof(instructions_t) == 1, "Enums de 1 byte com -fshort-enums não habilitado");
 
   if (argc < 2) {
     printf("Forma de uso:\nvm <caminho-para-o-programa>\n");
