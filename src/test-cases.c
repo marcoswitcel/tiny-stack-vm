@@ -285,6 +285,44 @@ void test_cases()
 
     dump_stack_memory(&vm);
   }
+
+  {
+    /**
+     * @brief Imprimir um triângulo de asteriscos de 10 linhas
+     * @todo João, acho que a partir desse exemplo posso perceber alguns
+     * problemas de uso e praticidade dos comandos.
+     */
+    inst_t instructions[] = {
+      INST(PUSH, '*'),
+      INST(PUSH, '\n'),
+      INST(PUSH, 1),
+      INST(PUSH, 1),
+      INST(POP, 0),
+      INST(SWAP, 2),
+      INST(WRITE, 0),
+      INST(SWAP, 2),
+      INST(PUSH, 1),
+      INST(PLUS, 0),
+      INST(DUP, 0),
+      INST(PUSH, 10),
+      INST(GREATER_THAN, 0),
+      INST(JUMP_ZERO, 4),
+      INST(PUSH, '\n'),
+      INST(WRITE, 0),
+    };
+
+    vm_instance_t vm = {0};
+    vm.program = (program_t) {
+      .instructions = (inst_t *) &instructions,
+      .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+    };
+
+    execute_program(&vm);
+
+    // assert(vm.stack[0] == 25 && "O valor 25 deveria estar nesse endereço");
+
+    dump_stack_memory(&vm);
+  }
 }
 
 int main()

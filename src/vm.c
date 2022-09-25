@@ -123,7 +123,7 @@ const char *signal_to_name(enum signals signal)
 
 void execute_program(vm_instance_t *vm)
 {
-  size_t max_execution_ticks = 75;
+  size_t max_execution_ticks = 115;
 
   while (vm->ip < vm->program.number_of_instructions && max_execution_ticks)
   {
@@ -140,7 +140,7 @@ void execute_program(vm_instance_t *vm)
   }
 
 end:
-  printf("ticks %ld\n", 75 - max_execution_ticks);
+  printf("ticks %ld\n", 115 - max_execution_ticks);
 }
 
 void dump_stack_memory(vm_instance_t *vm)
