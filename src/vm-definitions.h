@@ -25,6 +25,9 @@ typedef uint8_t word_t;
  * de 0 à 255, embora se eles são validos ou não depende do tamanho da stack em
  * runtime, e o valor zero em particular sempre será uma `noop` em termos de
  * efeito na aplicação.
+ * @todo João, implementar um operador de incremento, provavelmente através do
+ * comando plus (usando operand diferente de zero para isso). Uma vez implemen-
+ * tado, implementar também o decremento.
  */
 typedef enum instructions {
   /**
