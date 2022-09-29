@@ -114,7 +114,7 @@ typedef struct maybe_parsed {
 maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
 {
     maybe_parsed_t maybe = {0};
-    const char *source = parsing_context->source;
+    const char *source = parsing_context->source + parsing_context->currentIndex;
     char current_value;
 
     while ((current_value = *source) && (
@@ -125,14 +125,17 @@ maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
         source++;
     }
 
-    size_t symbol_size = source - parsing_context->source;
+    size_t symbol_size = source - (parsing_context->source + parsing_context->currentIndex);
 
     if (current_value == '\0' || is_whitespace(current_value) ) {
         char * symbol = malloc(sizeof(char) * symbol_size + 1);
-        memcpy(symbol, parsing_context->source, symbol_size);
+        memcpy(symbol, parsing_context->source + parsing_context->currentIndex, symbol_size);
         symbol[symbol_size] = '\0';
         maybe.ok = true;
         maybe.symbol = symbol;
+    } else {
+        maybe.ok = false;
+        maybe.symbol = ".Symbol error";
     }
 
     return maybe;
@@ -144,11 +147,14 @@ maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
  * 
  * @param parsing_context 
  */
-const maybe_instruction_line_t *parse_instruction_line(parsing_context_t *parsing_context)
+maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_context)
 {
     maybe_instruction_line_t maybe_instruction_line = {0};
-    const char *source = parsing_context->source;
+    const char *source = parsing_context->source + parsing_context->currentIndex;
     char current_value = *source;
+
+    // @todo João, checar se está funcionando
+    // Tenta parsear um label (opcional)
     if (current_value == '.') {
         parsing_context_t new_parsing_context = *parsing_context;
         new_parsing_context.currentIndex++;
@@ -156,29 +162,31 @@ const maybe_instruction_line_t *parse_instruction_line(parsing_context_t *parsin
 
         if (maybe_parsed.ok) {
             maybe_instruction_line.label = maybe_parsed.symbol;
+            parsing_context->currentIndex += strlen(maybe_instruction_line.label) + 1;
         } else {
             maybe_instruction_line.matched = false;
             goto shoud_return;
         }
-        // @todo João, pode ser um label
-    // } else if (current_value > '0' && current_value < ('9'+1)) { //  @todo João, fazer esse logo em seguida
+    }
+
+    if (current_value > '0' && current_value < ('9'+1)) { //  @todo João, fazer esse logo em seguida
         // @todo João, pode ser um número
     } else {
         // @todo João, pode ser um nome de instrução
     }
-
+maybe_instruction_line.matched = true;
 shoud_return:
-    return &maybe_instruction_line;
+    return maybe_instruction_line;
 }
 
 
 void test02()
 {
-    static inst_t instructions[STACK_MAX_SIZE] = {0};
-    size_t instructions_size = 0;
+    //static inst_t instructions[STACK_MAX_SIZE] = {0};
+    //size_t instructions_size = 0;
 
     // Primeiro exemplo a ser parseado
-    const char * text = "  PUSH 25\n PUSH   50\nPLUS\n";
+    const char * text = "  .teste PUSH 25\n PUSH   50\nPLUS\n";
 
     parsing_context_t parsing_context = {
         .source = text,
@@ -189,10 +197,15 @@ void test02()
     
     skip_whitespace(&parsing_context);
     
-    parse_instruction_line(&parsing_context);
-
     assert(parsing_context.currentIndex == 2 && "Deveria estar no index dois");
 
+    maybe_instruction_line_t maybe_instruction_line = parse_instruction_line(&parsing_context);
+
+    assert(parsing_context.currentIndex == 8 && "Deveria estar no index oito");
+
+    if (maybe_instruction_line.matched) {
+        printf("parsed symbol: %s", maybe_instruction_line.label);
+    }
 }
 
 int main()
