@@ -178,18 +178,18 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     if (current_value > '0' && current_value < ('9'+1)) { //  @todo João, fazer esse logo em seguida
         // @todo João, pode ser um número
     } else {
-        // maybe_parsed_t maybe_parsed = parse_symbol(parsing_context);
+        maybe_parsed_t maybe_parsed = parse_symbol(parsing_context);
 
-        // if (maybe_parsed.ok && strcmp(maybe_parsed.symbol, "PUSH") ) {
-        //     maybe_instruction_line.instruction = (inst_t) {
-        //         .type = INST_PUSH,
-        //         .operand = 128,
-        //     };
-        //     parsing_context->currentIndex += strlen(maybe_parsed.symbol);
-        // } else {
-        //     maybe_instruction_line.matched = false;
-        //     goto shoud_return;
-        // }
+        if (maybe_parsed.ok && !strcmp(maybe_parsed.symbol, "PUSH") ) {
+            maybe_instruction_line.instruction = (inst_t) {
+                .type = INST_PUSH,
+                .operand = 128,
+            };
+            parsing_context->currentIndex += strlen(maybe_parsed.symbol);
+        } else {
+            maybe_instruction_line.matched = false;
+            goto shoud_return;
+        }
     }
 maybe_instruction_line.matched = true;
 shoud_return:
@@ -218,10 +218,15 @@ void test02()
 
     maybe_instruction_line_t maybe_instruction_line = parse_instruction_line(&parsing_context);
 
-    assert(parsing_context.currentIndex == 9 && "Deveria estar no index nove");
+    assert(parsing_context.currentIndex == 13 && "Deveria estar no index treze");
 
     if (maybe_instruction_line.matched) {
-        printf("parsed symbol: %s", maybe_instruction_line.label);
+        printf(
+            "parsed symbol: %s, type(opcode): %d, operand: %d",
+            maybe_instruction_line.label,
+            maybe_instruction_line.instruction.type,
+            maybe_instruction_line.instruction.operand
+        );
     }
 }
 
