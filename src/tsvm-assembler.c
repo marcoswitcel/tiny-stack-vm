@@ -176,7 +176,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     }
 
     if (current_value > '0' && current_value < ('9'+1)) { //  @todo João, fazer esse logo em seguida
-        // @todo João, pode ser um número
+        // @todo João, pode ser um número (açucar sintático para um push)
     } else {
         maybe_parsed_t maybe_parsed = parse_symbol(parsing_context);
 
@@ -190,6 +190,10 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
             maybe_instruction_line.matched = false;
             goto shoud_return;
         }
+
+        // @todo João, skip e atualização do index do parsing context, ainda precisamos parsear o operand
+        // @todo João, avaliar as regras semânticas entram em ação aqui, algumas instruções tem comandos
+        // parâmetro opcional e parâmetro padrão diferente de 0
     }
 maybe_instruction_line.matched = true;
 shoud_return:
