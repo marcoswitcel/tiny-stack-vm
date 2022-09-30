@@ -88,7 +88,7 @@ static inline bool is_whitespace(char value)
 
 void skip_whitespace(parsing_context_t *parsing_context)
 {
-    const char *source = parsing_context->source;
+    const char * source = parsing_context->source + parsing_context->currentIndex;
     char value; 
 
     while ((value = *source) && is_whitespace(value))
@@ -96,7 +96,7 @@ void skip_whitespace(parsing_context_t *parsing_context)
         source++;
     }
 
-    parsing_context->currentIndex += source - parsing_context->source;
+    parsing_context->currentIndex += source - (parsing_context->source + parsing_context->currentIndex);
 }
 
 typedef struct maybe_instruction_line {
