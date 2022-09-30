@@ -88,7 +88,7 @@ static inline bool is_whitespace(char value)
 
 void skip_whitespace(parsing_context_t *parsing_context)
 {
-    const char * source = parsing_context->source + parsing_context->currentIndex;
+    const char *source = parsing_context->source + parsing_context->currentIndex;
     char value; 
 
     while ((value = *source) && is_whitespace(value))
@@ -150,6 +150,7 @@ maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
 maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_context)
 {
     maybe_instruction_line_t maybe_instruction_line = {0};
+    skip_whitespace(parsing_context);
     const char *source = parsing_context->source + parsing_context->currentIndex;
     char current_value = *source;
 
@@ -167,12 +168,28 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
             maybe_instruction_line.matched = false;
             goto shoud_return;
         }
+
+        skip_whitespace(parsing_context);
+
+        source = parsing_context->source + parsing_context->currentIndex;
+        current_value = *source;
     }
 
     if (current_value > '0' && current_value < ('9'+1)) { //  @todo João, fazer esse logo em seguida
         // @todo João, pode ser um número
     } else {
-        // @todo João, pode ser um nome de instrução
+        // maybe_parsed_t maybe_parsed = parse_symbol(parsing_context);
+
+        // if (maybe_parsed.ok && strcmp(maybe_parsed.symbol, "PUSH") ) {
+        //     maybe_instruction_line.instruction = (inst_t) {
+        //         .type = INST_PUSH,
+        //         .operand = 128,
+        //     };
+        //     parsing_context->currentIndex += strlen(maybe_parsed.symbol);
+        // } else {
+        //     maybe_instruction_line.matched = false;
+        //     goto shoud_return;
+        // }
     }
 maybe_instruction_line.matched = true;
 shoud_return:
@@ -201,7 +218,7 @@ void test02()
 
     maybe_instruction_line_t maybe_instruction_line = parse_instruction_line(&parsing_context);
 
-    assert(parsing_context.currentIndex == 8 && "Deveria estar no index oito");
+    assert(parsing_context.currentIndex == 9 && "Deveria estar no index nove");
 
     if (maybe_instruction_line.matched) {
         printf("parsed symbol: %s", maybe_instruction_line.label);
