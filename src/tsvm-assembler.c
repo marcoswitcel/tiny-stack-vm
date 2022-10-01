@@ -145,6 +145,11 @@ maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
  * @brief Parseia um linha lógica. A linha é formada por uma etiqueta/marcação,
  * opcional, seguida por um nome de instrução
  * 
+ * @todo João, fazer os ajustes na struct `maybe_instruction_line` para poder
+ * retornar mensagens de erro de parsing
+ * @todo João, fazer os ajustes necessários na struct `maybe_parsed` para 
+ * retornar as mensagens de erro de parsing
+ * 
  * @param parsing_context 
  */
 maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_context)
