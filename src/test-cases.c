@@ -291,6 +291,9 @@ void test_cases()
      * @brief Imprimir um triângulo de asteriscos de 10 linhas
      * @todo João, acho que a partir desse exemplo posso perceber alguns
      * problemas de uso e praticidade dos comandos.
+     * @todo João, terminar de escrever esse programa quando terminar de
+     * implementar o assembler. Por hora ele só printa uma linha com dez
+     * asteriscos.
      */
     inst_t instructions[] = {
       INST(PUSH, '*'),
