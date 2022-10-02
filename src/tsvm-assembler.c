@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
@@ -9,6 +10,7 @@
 
 typedef struct parsing_context {
     const char *source;
+    const size_t source_length;
     size_t currentIndex;
 } parsing_context_t;
 
@@ -86,6 +88,16 @@ static inline bool is_whitespace(char value)
     return (value == ' ' || value == '\t' || value == '\r' || value == '\n');
 }
 
+static inline bool is_digit(char value)
+{
+    return value > ('0' - 1) && value < ('9' + 1);
+}
+
+static inline bool is_digit_not_zero(char value)
+{
+    return value > '0' && value < ('9' + 1);
+}
+
 void skip_whitespace(parsing_context_t *parsing_context)
 {
     const char *source = parsing_context->source + parsing_context->currentIndex;
@@ -139,6 +151,80 @@ maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
     }
 
     return maybe;
+}
+
+/**
+ * @brief Converte um `number literal` para um int16_t, qualquer número
+ * negativo representa o fracasso no processo de conversão.
+ * 
+ * @param number_literal_form 
+ * @return int16_t 
+ */
+int16_t number_literal_as_number(const char *number_literal_form)
+{
+    const size_t number_literal_form_length = strlen(number_literal_form);
+    size_t size = number_literal_form_length;
+
+    if (size > 3) return -1;
+
+    int16_t number = 0;
+    while (size--)
+    {
+        number += (number_literal_form[size] - '0') * pow(10, (number_literal_form_length - 1) - size);
+    }
+
+    if (number > UINT8_MAX) return -1;
+    
+    return number;
+}
+
+typedef struct maybe_parsed_number {
+    bool ok;
+    uint8_t number;
+    const char *literal_form;
+    const char *error_message;
+} maybe_parsed_number_t;
+
+maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
+{
+    maybe_parsed_number_t maybe_number = {0};
+
+    const char *source = parsing_context->source + parsing_context->currentIndex;
+    char current_value = *source;
+
+    if (is_digit_not_zero(current_value)) {
+
+        while ((current_value = *source) && is_digit(current_value))
+        {
+            source++;
+        }
+
+        size_t literal_form_size = source - (parsing_context->source + parsing_context->currentIndex);
+
+        
+        if (current_value == '\0' || is_whitespace(current_value) ) {
+            char * literal_form = malloc(sizeof(char) * literal_form_size + 1);
+            memcpy(literal_form, parsing_context->source + parsing_context->currentIndex, literal_form_size);
+            literal_form[literal_form_size] = '\0';
+
+            int16_t number = number_literal_as_number(literal_form);
+
+            if (number < 0) {
+                // @todo João, leak da memória referenciada por `literal_form`
+                maybe_number.ok = false;
+                maybe_number.error_message = "Numero invalido";    
+            } else {
+                maybe_number.ok = true;
+                maybe_number.number = (uint8_t) number;
+                maybe_number.literal_form = literal_form;
+            }
+        } else {
+            maybe_number.ok = false;
+            maybe_number.error_message = "Numero invalido";
+        }
+    }
+
+    return maybe_number;
 }
 
 /**
@@ -196,6 +282,18 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
             goto shoud_return;
         }
 
+        skip_whitespace(parsing_context);
+
+        maybe_parsed_number_t maybe_number = parse_number(parsing_context);
+
+        if (maybe_number.ok) {
+            maybe_instruction_line.instruction.operand = maybe_number.number;
+            parsing_context->currentIndex += strlen(maybe_number.literal_form);
+        } else {
+            maybe_instruction_line.matched = false;
+            goto shoud_return;
+        }
+
         // @todo João, skip e atualização do index do parsing context, ainda precisamos parsear o operand
         // @todo João, avaliar as regras semânticas entram em ação aqui, algumas instruções tem comandos
         // parâmetro opcional e parâmetro padrão diferente de 0
@@ -217,7 +315,7 @@ void test02()
     parsing_context_t parsing_context = {
         .source = text,
         .currentIndex = 0,
-
+        .source_length = strlen(text),
     };
 
     
@@ -227,7 +325,7 @@ void test02()
 
     maybe_instruction_line_t maybe_instruction_line = parse_instruction_line(&parsing_context);
 
-    assert(parsing_context.currentIndex == 13 && "Deveria estar no index treze");
+    assert(parsing_context.currentIndex == 16 && "Deveria estar no index dezesseis");
 
     if (maybe_instruction_line.matched) {
         printf(
