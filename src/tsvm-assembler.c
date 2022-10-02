@@ -115,6 +115,7 @@ typedef struct maybe_instruction_line {
     bool matched;
     const char *label;
     inst_t instruction;
+    const char *error_message;
 } maybe_instruction_line_t;
 
 typedef struct maybe_parsed {
@@ -139,7 +140,13 @@ maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
 
     size_t symbol_size = source - (parsing_context->source + parsing_context->currentIndex);
 
-    if (current_value == '\0' || is_whitespace(current_value) ) {
+    /**
+     * @note João, por hora checo a variável `symbol_size` para saber se o
+     * parser consumiu pelo menos um token, senão reporto o erro. Os outros
+     * dois checks do if são pra confirmar que os tokens a seguir são tokens
+     * válidos para a terminação do símbolo.
+     */
+    if (symbol_size && (current_value == '\0' || is_whitespace(current_value) )) {
         char * symbol = malloc(sizeof(char) * symbol_size + 1);
         memcpy(symbol, parsing_context->source + parsing_context->currentIndex, symbol_size);
         symbol[symbol_size] = '\0';
@@ -246,6 +253,7 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
 maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_context)
 {
     maybe_instruction_line_t maybe_instruction_line = {0};
+    maybe_instruction_line.error_message = "Mensagem padrão";
     skip_whitespace(parsing_context);
     const char *source = parsing_context->source + parsing_context->currentIndex;
     char current_value = *source;
@@ -261,6 +269,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
             maybe_instruction_line.label = maybe_parsed.symbol;
             parsing_context->currentIndex += strlen(maybe_instruction_line.label) + 1;
         } else {
+            maybe_instruction_line.error_message = "Não foi possível parsear o label";
             maybe_instruction_line.matched = false;
             goto shoud_return;
         }
@@ -283,6 +292,8 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
             };
             parsing_context->currentIndex += strlen(maybe_parsed.symbol);
         } else {
+            // @todo João, temporário
+            maybe_instruction_line.error_message = "Esperava um PUSH";
             maybe_instruction_line.matched = false;
             goto shoud_return;
         }
@@ -295,6 +306,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
             maybe_instruction_line.instruction.operand = maybe_number.number;
             parsing_context->currentIndex += strlen(maybe_number.literal_form);
         } else {
+            maybe_instruction_line.error_message = "Esperava um número";
             maybe_instruction_line.matched = false;
             goto shoud_return;
         }
@@ -334,11 +346,31 @@ void test02()
 
     if (maybe_instruction_line.matched) {
         printf(
-            "parsed symbol: %s, type(opcode): %d, operand: %d",
+            "\nparsed symbol: %s, type(opcode): %d, operand: %d\n",
             maybe_instruction_line.label,
             maybe_instruction_line.instruction.type,
             maybe_instruction_line.instruction.operand
         );
+    }
+
+    while (parsing_context.currentIndex < parsing_context.source_length)
+    {
+        maybe_instruction_line_t maybe_instruction_line = parse_instruction_line(&parsing_context);
+
+        if (maybe_instruction_line.matched) {
+            printf(
+                "\nparsed symbol: %s, type(opcode): %d, operand: %d\n",
+                maybe_instruction_line.label,
+                maybe_instruction_line.instruction.type,
+                maybe_instruction_line.instruction.operand
+            );
+        } else {
+            printf("falha: [%s]", maybe_instruction_line.error_message);
+            return;
+        }
+
+        // Necessário para empurrar o cursor até o final do linha caso ela tenha acabado
+        skip_whitespace(&parsing_context);
     }
 }
 
