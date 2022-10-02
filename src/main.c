@@ -11,6 +11,7 @@ int main(int argc, const char *argv[])
 
   if (argc < 2) {
     printf("Forma de uso:\nvm <caminho-para-o-programa>\n");
+    return EXIT_SUCCESS;
   }
 
   printf("---- LOADED program -----\n");
