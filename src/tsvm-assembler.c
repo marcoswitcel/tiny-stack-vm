@@ -170,6 +170,11 @@ int16_t number_literal_as_number(const char *number_literal_form)
     int16_t number = 0;
     while (size--)
     {
+        // @todo João, aqui sempre deve ser um dígito válido, mas deixo o
+        // assert para validar isso durante o desenvolvimento, se essa 
+        // condição for quebrada recorrentemente, pode ser mudado para um
+        // check em tempo de execução
+        assert(is_digit(number_literal_form[size]) && "Deve ser um dígito válido");
         number += (number_literal_form[size] - '0') * pow(10, (number_literal_form_length - 1) - size);
     }
 
@@ -337,10 +342,21 @@ void test02()
     }
 }
 
+void test_number_literal_as_number(void)
+{
+    assert(number_literal_as_number("0") == 0 && "Parasenado corretamente");
+    assert(number_literal_as_number("128") == 128 && "Parasenado corretamente");
+    assert(number_literal_as_number("52") == 52 && "Parasenado corretamente");
+    assert(number_literal_as_number("255") == 255 && "Parasenado corretamente");
+    assert(number_literal_as_number("256") < 0 && "Parasenado corretamente");
+}
+
 int main()
 {
     test01();
     test02();
+    // Teste de subfuncionalidades
+    test_number_literal_as_number();
 
     return EXIT_SUCCESS;
 }
