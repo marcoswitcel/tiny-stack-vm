@@ -302,10 +302,24 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     current_value = *source;
   }
 
-  if (current_value > '0' && current_value < ('9' + 1))
+  if (is_digit_not_zero(current_value))
   {
-    //  @todo João, fazer esse logo em seguida
-    //  @todo João, pode ser um número (açucar sintático para um push)
+    maybe_parsed_number_t maybe_number = parse_number(parsing_context);
+
+    if (maybe_number.ok)
+    {
+      maybe_instruction_line.instruction = (inst_t){
+        .type = INST_PUSH,
+        .operand = maybe_number.number,
+      };
+      parsing_context->currentIndex += strlen(maybe_number.literal_form);
+    }
+    else
+    {
+      maybe_instruction_line.error_message = "Esperava um número (push)";
+      maybe_instruction_line.matched = false;
+      goto shoud_return;
+    }
   }
   else
   {
