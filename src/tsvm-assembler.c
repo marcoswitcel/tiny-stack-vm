@@ -222,9 +222,9 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
             int16_t number = number_literal_as_number(literal_form);
 
             if (number < 0) {
-                // @todo João, leak da memória referenciada por `literal_form`
                 maybe_number.ok = false;
-                maybe_number.error_message = "Numero invalido";    
+                maybe_number.error_message = "Numero invalido";  
+                free(literal_form);
             } else {
                 maybe_number.ok = true;
                 maybe_number.number = (uint8_t) number;
