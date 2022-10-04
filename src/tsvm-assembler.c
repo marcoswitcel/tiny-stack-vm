@@ -293,7 +293,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     {
       maybe_instruction_line.error_message = "Não foi possível parsear o label";
       maybe_instruction_line.matched = false;
-      goto shoud_return;
+      return maybe_instruction_line;
     }
 
     skip_whitespace(parsing_context);
@@ -318,7 +318,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     {
       maybe_instruction_line.error_message = "Esperava um número (push)";
       maybe_instruction_line.matched = false;
-      goto shoud_return;
+      return maybe_instruction_line;
     }
   }
   else
@@ -338,7 +338,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
       // @todo João, temporário
       maybe_instruction_line.error_message = "Esperava um PUSH";
       maybe_instruction_line.matched = false;
-      goto shoud_return;
+      return maybe_instruction_line;
     }
 
     skip_whitespace(parsing_context);
@@ -354,7 +354,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     {
       maybe_instruction_line.error_message = "Esperava um número";
       maybe_instruction_line.matched = false;
-      goto shoud_return;
+      return maybe_instruction_line;
     }
 
     // @todo João, skip e atualização do index do parsing context, ainda precisamos parsear o operand
@@ -362,7 +362,6 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     // parâmetro opcional e parâmetro padrão diferente de 0
   }
   maybe_instruction_line.matched = true;
-shoud_return:
   return maybe_instruction_line;
 }
 
