@@ -22,12 +22,23 @@ typedef struct maybe_instruction
   parsing_context_t new_parsing_context;
 } maybe_instruction_t;
 
+/**
+ * @brief Retorna o endereço do próximo char a ser consumido
+ * 
+ * @param parsing_context 
+ * @return const char* 
+ */
+static inline const char* get_current_address(const parsing_context_t *parsing_context)
+{
+  return parsing_context->source + parsing_context->currentIndex;
+}
+
 // @todo João, revisar o tamanho máximo a memória de instruções
 // static inst_t instructions[STACK_MAX_SIZE] = {0};
 
 static maybe_instruction_t parse(const char *token, parsing_context_t parsing_context)
 {
-  const char *sourceCodeStart = parsing_context.source + parsing_context.currentIndex;
+  const char *sourceCodeStart = get_current_address(&parsing_context);
   const char *tokenStart = token;
   size_t consumed_bytes = 0;
 
@@ -102,7 +113,7 @@ static inline bool is_digit_not_zero(char value)
 
 void skip_whitespace(parsing_context_t *parsing_context)
 {
-  const char *source = parsing_context->source + parsing_context->currentIndex;
+  const char *source = get_current_address(parsing_context);
   char value;
 
   while ((value = *source) && is_whitespace(value))
@@ -110,7 +121,7 @@ void skip_whitespace(parsing_context_t *parsing_context)
     source++;
   }
 
-  parsing_context->currentIndex += source - (parsing_context->source + parsing_context->currentIndex);
+  parsing_context->currentIndex += source - get_current_address(parsing_context);
 }
 
 typedef struct maybe_instruction_line
@@ -131,7 +142,7 @@ typedef struct maybe_parsed
 maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
 {
   maybe_parsed_t maybe = {0};
-  const char *source = parsing_context->source + parsing_context->currentIndex;
+  const char *source = get_current_address(parsing_context);
   char current_value;
 
   while ((current_value = *source) && ((current_value >= 'a' && 'z' >= current_value) ||
@@ -140,7 +151,7 @@ maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
     source++;
   }
 
-  size_t symbol_size = source - (parsing_context->source + parsing_context->currentIndex);
+  size_t symbol_size = source - get_current_address(parsing_context);
 
   /**
    * @note João, por hora checo a variável `symbol_size` para saber se o
@@ -151,7 +162,7 @@ maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
   if (symbol_size && (current_value == '\0' || is_whitespace(current_value)))
   {
     char *symbol = malloc(sizeof(char) * symbol_size + 1);
-    memcpy(symbol, parsing_context->source + parsing_context->currentIndex, symbol_size);
+    memcpy(symbol, get_current_address(parsing_context), symbol_size);
     symbol[symbol_size] = '\0';
     maybe.ok = true;
     maybe.symbol = symbol;
@@ -209,7 +220,7 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
 {
   maybe_parsed_number_t maybe_number = {0};
 
-  const char *source = parsing_context->source + parsing_context->currentIndex;
+  const char *source = get_current_address(parsing_context);
   char current_value = *source;
 
   if (is_digit_not_zero(current_value))
@@ -220,12 +231,12 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
       source++;
     }
 
-    size_t literal_form_size = source - (parsing_context->source + parsing_context->currentIndex);
+    size_t literal_form_size = source - get_current_address(parsing_context);
 
     if (current_value == '\0' || is_whitespace(current_value))
     {
       char *literal_form = malloc(sizeof(char) * literal_form_size + 1);
-      memcpy(literal_form, parsing_context->source + parsing_context->currentIndex, literal_form_size);
+      memcpy(literal_form, get_current_address(parsing_context), literal_form_size);
       literal_form[literal_form_size] = '\0';
 
       int16_t number = number_literal_as_number(literal_form);
@@ -264,7 +275,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
   maybe_instruction_line_t maybe_instruction_line = {0};
   maybe_instruction_line.error_message = "Mensagem padrão";
   skip_whitespace(parsing_context);
-  const char *source = parsing_context->source + parsing_context->currentIndex;
+  const char *source = get_current_address(parsing_context);
   char current_value = *source;
 
   if (current_value == '.')
@@ -287,7 +298,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
 
     skip_whitespace(parsing_context);
 
-    source = parsing_context->source + parsing_context->currentIndex;
+    source = get_current_address(parsing_context);
     current_value = *source;
   }
 
