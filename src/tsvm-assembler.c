@@ -243,11 +243,6 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
  * @brief Parseia um linha lógica. A linha é formada por uma etiqueta/marcação,
  * opcional, seguida por um nome de instrução
  * 
- * @todo João, fazer os ajustes na struct `maybe_instruction_line` para poder
- * retornar mensagens de erro de parsing
- * @todo João, fazer os ajustes necessários na struct `maybe_parsed` para 
- * retornar as mensagens de erro de parsing
- * 
  * @param parsing_context 
  */
 maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_context)
@@ -258,8 +253,6 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     const char *source = parsing_context->source + parsing_context->currentIndex;
     char current_value = *source;
 
-    // @todo João, checar se está funcionando
-    // Tenta parsear um label (opcional)
     if (current_value == '.') {
         parsing_context_t new_parsing_context = *parsing_context;
         new_parsing_context.currentIndex++;
@@ -280,8 +273,9 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
         current_value = *source;
     }
 
-    if (current_value > '0' && current_value < ('9'+1)) { //  @todo João, fazer esse logo em seguida
-        // @todo João, pode ser um número (açucar sintático para um push)
+    if (current_value > '0' && current_value < ('9'+1)) {
+        //  @todo João, fazer esse logo em seguida
+        //  @todo João, pode ser um número (açucar sintático para um push)
     } else {
         maybe_parsed_t maybe_parsed = parse_symbol(parsing_context);
 
