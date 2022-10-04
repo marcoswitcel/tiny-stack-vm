@@ -327,9 +327,9 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
 
     if (maybe_parsed.ok && !strcmp(maybe_parsed.symbol, "PUSH"))
     {
-      maybe_instruction_line.instruction = (inst_t){
-          .type = INST_PUSH,
-          .operand = 128,
+      maybe_instruction_line.instruction = (inst_t) {
+        .type = INST_PUSH,
+        .operand = 128,
       };
       parsing_context->currentIndex += strlen(maybe_parsed.symbol);
     }
