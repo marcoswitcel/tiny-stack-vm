@@ -99,6 +99,52 @@ void skip_whitespace(parsing_context_t *parsing_context)
   parsing_context->currentIndex += source - get_current_address(parsing_context);
 }
 
+typedef struct optional_intruction 
+{
+  bool is;
+  instructions_t inst;
+} optional_instruction_t;
+
+/**
+ * @brief Valida se o símbolo provido é um nome de instrução conhecido
+ * @todo João, terminar de implementar, essa primeira implementação serve
+ * apenas para testar e está incompleta 
+ * 
+ * @param operation_name 
+ * @return optional_instruction_t 
+ */
+optional_instruction_t lookup_instruction_for_symbol(const char *operation_name)
+{
+  optional_instruction_t result = {0};
+
+  if (!strcmp(operation_name, "PUSH")) {
+    result.is = true;
+    result.inst = INST_PUSH;
+    return result;
+  }
+
+  if (!strcmp(operation_name, "PLUS")) {
+    result.is = true;
+    result.inst = INST_PLUS;
+    return result;
+  }
+
+  return result;
+}
+
+/**
+ * @brief Valida se o símbolo provido é um nome de instrução conhecido
+ * @todo João, ajustar dependência dessa função na função de lookup
+ * 
+ * @param operation_name 
+ * @return true 
+ * @return false 
+ */
+bool is_a_valid_operation_name(const char *operation_name)
+{
+  return lookup_instruction_for_symbol(operation_name).is;
+}
+
 typedef struct maybe_instruction_line
 {
   bool matched;
@@ -300,18 +346,19 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
   {
     maybe_parsed_t maybe_parsed = parse_symbol(parsing_context);
 
-    if (maybe_parsed.ok && !strcmp(maybe_parsed.symbol, "PUSH"))
+    if (maybe_parsed.ok && is_a_valid_operation_name(maybe_parsed.symbol))
     {
+      instructions_t inst = lookup_instruction_for_symbol(maybe_parsed.symbol).inst; 
       maybe_instruction_line.instruction = (inst_t) {
-        .type = INST_PUSH,
-        .operand = 128,
+        .type = inst,
+        .operand = 0,
       };
       parsing_context->currentIndex += strlen(maybe_parsed.symbol);
     }
     else
     {
       // @todo João, temporário
-      maybe_instruction_line.error_message = "Esperava um PUSH";
+      maybe_instruction_line.error_message = "Esperava uma instrução valida";
       maybe_instruction_line.matched = false;
       return maybe_instruction_line;
     }
