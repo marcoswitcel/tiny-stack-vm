@@ -280,6 +280,20 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
       maybe_number.ok = false;
       maybe_number.error_message = "Numero invalido";
     }
+  } else if (current_value = '0') {
+    source++;
+    current_value = *source;
+    if (current_value == '\0' || is_whitespace(current_value))
+    {
+      maybe_number.ok = true;
+      maybe_number.number = 0;
+      maybe_number.literal_form = "0";
+    }
+    else
+    {
+      maybe_number.ok = false;
+      maybe_number.error_message = "Numero invalido, nao pode começar com zero";
+    }
   }
 
   return maybe_number;
@@ -323,7 +337,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     current_value = *source;
   }
 
-  if (is_digit_not_zero(current_value))
+  if (is_digit(current_value))
   {
     maybe_parsed_number_t maybe_number = parse_number(parsing_context);
 

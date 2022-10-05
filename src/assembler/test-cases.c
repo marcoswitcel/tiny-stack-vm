@@ -35,7 +35,7 @@ void test02()
   // size_t instructions_size = 0;
 
   // Primeiro exemplo a ser parseado
-  const char *text = "  .teste PUSH 25\n PUSH   50\nPLUS\n";
+  const char *text = "  .teste PUSH 25\n PUSH   50\nPLUS 0\n";
 
   parsing_context_t parsing_context = {
       .source = text,
