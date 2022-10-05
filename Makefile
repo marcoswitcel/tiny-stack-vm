@@ -8,9 +8,16 @@ tests: src/test-cases.c
 main: src/main.c
 	$(CC) $(CFLAGS) src/main.c -o bin/a.out $(LFLAGS)
 
+tests-assembler:
+	$(CC) $(CFLAGS) src/assembler/test-cases.c -o bin/tsvm-assembler-tests.out $(LFLAGS)
+
 assembler: src/assembler/assembler.c
-	$(CC) $(CFLAGS) src/assembler/assembler.c -o bin/tsvm-assembler.out $(LFLAGS)
+	$(CC) $(CFLAGS) src/assembler/main.c -o bin/tsvm-assembler.out $(LFLAGS)
 
 run: tests main
 	./bin/t.out > ./bin/test.log
 	./bin/a.out ./samples/bin/push10-push5-plus.vmp
+
+run-assembler: tests-assembler assembler
+	./bin/tsvm-assembler-tests.out > ./bin/assembler-tests.log
+	./bin/tsvm-assembler.out ./samples/asm/push10-push5-plus.tsasm	
