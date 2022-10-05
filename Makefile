@@ -8,8 +8,8 @@ tests: src/test-cases.c
 main: src/main.c
 	$(CC) $(CFLAGS) src/main.c -o bin/a.out $(LFLAGS)
 
-assembler: src/tsvm-assembler.c
-	$(CC) $(CFLAGS) src/tsvm-assembler.c -o bin/tsvm-assembler.out $(LFLAGS)
+assembler: src/assembler/assembler.c
+	$(CC) $(CFLAGS) src/assembler/assembler.c -o bin/tsvm-assembler.out $(LFLAGS)
 
 run: tests main
 	./bin/t.out > ./bin/test.log

@@ -5,8 +5,8 @@
 #include <stdbool.h>
 #include <assert.h>
 
-#include "./vm-definitions.h"
-#include "./compiler-requirements.h"
+#include "../vm-definitions.h"
+#include "../compiler-requirements.h"
 
 typedef struct parsing_context
 {
