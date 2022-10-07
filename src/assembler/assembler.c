@@ -36,41 +36,6 @@ static inline const char* get_current_address(const parsing_context_t *parsing_c
 // @todo João, revisar o tamanho máximo a memória de instruções
 // static inst_t instructions[STACK_MAX_SIZE] = {0};
 
-static maybe_instruction_t parse(const char *token, parsing_context_t parsing_context)
-{
-  const char *sourceCodeStart = get_current_address(&parsing_context);
-  const char *tokenStart = token;
-  size_t consumed_bytes = 0;
-
-  assert(*token != '\0' && "Token não devem ser strings vazias");
-
-  while (*sourceCodeStart == *tokenStart && *sourceCodeStart != '\0')
-  {
-    sourceCodeStart++;
-    tokenStart++;
-    consumed_bytes++;
-  }
-
-  if (consumed_bytes == strlen(token))
-  {
-    return (maybe_instruction_t){
-        .matched = true,
-        .instruction = {
-            .type = INST_PUSH,
-            .operand = 0,
-        },
-        .new_parsing_context = {
-            .source = parsing_context.source + consumed_bytes,
-            .currentIndex = parsing_context.currentIndex + consumed_bytes,
-        }};
-  }
-
-  return (maybe_instruction_t){
-      .matched = false,
-      .instruction = {0},
-      .new_parsing_context = parsing_context};
-}
-
 static inline bool is_whitespace(char value)
 {
   return (value == ' ' || value == '\t' || value == '\r' || value == '\n');

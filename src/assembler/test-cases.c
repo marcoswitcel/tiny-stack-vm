@@ -4,31 +4,6 @@
 
 #include "./assembler.c"
 
-void test01()
-{
-  // Primeiro exemplo a ser parseado
-  const char *text = "PUSH 25\n PUSH   50\nPLUS\n";
-
-  parsing_context_t initial_parsing_context = {
-      .source = text,
-      .currentIndex = 0,
-  };
-
-  // parser (ctx) -> ok|err
-  maybe_instruction_t maybe = parse("PUSH", initial_parsing_context);
-
-  printf("Parsing context inicial: currenIndex %ld", initial_parsing_context.currentIndex);
-
-  if (maybe.matched)
-  {
-    printf("deu matche: currenIndex %ld", maybe.new_parsing_context.currentIndex);
-  }
-  else
-  {
-    printf("não de matche: currenIndex %ld", maybe.new_parsing_context.currentIndex);
-  }
-}
-
 void test02()
 {
   // static inst_t instructions[STACK_MAX_SIZE] = {0};
@@ -94,7 +69,6 @@ void test_number_literal_as_number(void)
 
 void test_cases(void)
 {
-  test01();
   test02();
   // Teste de subfuncionalidades
   test_number_literal_as_number();
