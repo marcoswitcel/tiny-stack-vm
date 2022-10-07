@@ -390,3 +390,56 @@ const char* read_file_as_cstring(const char *file_path)
 
   return (const char*) buffer;
 }
+
+/**
+ * @brief Parseia e printa as informações extraídas do source asm
+ * @todo João, temporário isso aqui
+ * 
+ * @param source 
+ * @return true 
+ * @return false 
+ */
+bool parse_and_print(const char *source)
+{
+  parsing_context_t parsing_context = {
+    .source = source,
+    .currentIndex = 0,
+    .source_length = strlen(source),
+  };
+  
+  while (parsing_context.currentIndex < parsing_context.source_length)
+  {
+    maybe_instruction_line_t maybe_instruction_line = parse_instruction_line(&parsing_context);
+
+    if (maybe_instruction_line.matched)
+    {
+      if (maybe_instruction_line.label) {
+        printf(
+          "{ .label =  \"%s\", .opcode = %d, .operand = %d }\n",
+          maybe_instruction_line.label,
+          maybe_instruction_line.instruction.type,
+          maybe_instruction_line.instruction.operand
+        );
+      } else {
+        printf(
+          "{ .label =  NULL, .opcode = %d, .operand = %d }\n",
+          maybe_instruction_line.instruction.type,
+          maybe_instruction_line.instruction.operand
+        );
+      }
+      
+    }
+    else
+    {
+      printf(">>>> falha: [%s] <<<<", maybe_instruction_line.error_message);
+      return false;
+    }
+
+    // Necessário para empurrar o cursor até o final do linha caso ela tenha acabado
+    skip_whitespace(&parsing_context);
+  }
+
+  printf("Programa parseado com sucesso.\n");
+
+  return true;
+}

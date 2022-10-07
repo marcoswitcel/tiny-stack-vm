@@ -2,4 +2,4 @@
 .testeum PUSH 10
 .testdois 
 PUSH 5
-PLUS
+PLUS 0

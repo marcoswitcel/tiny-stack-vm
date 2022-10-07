@@ -15,7 +15,7 @@ int main(int argc, const char *argv[])
   printf("---- LOADED program -----\n");
   const char *asm_file_content = read_file_as_cstring(argv[1]);
 
-  printf("Conteúdo do arquivo:\n---------------------\n%s\n---------------------\n", asm_file_content);
+  parse_and_print(asm_file_content);
 
   return EXIT_SUCCESS;
 }
