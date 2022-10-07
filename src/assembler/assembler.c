@@ -280,7 +280,7 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
       maybe_number.ok = false;
       maybe_number.error_message = "Numero invalido";
     }
-  } else if (current_value = '0') {
+  } else if (current_value == '0') {
     source++;
     current_value = *source;
     if (current_value == '\0' || is_whitespace(current_value))
