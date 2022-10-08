@@ -432,15 +432,35 @@ void print_instruction_line(instruction_line_t *instruction_line)
   }
 }
 
+typedef struct stack_instruction_line {
+  uint8_t capacity;
+  instruction_line_t store[UINT8_MAX];
+  uint8_t count;
+} stack_instruction_line_t;
+
+void stack_instruction_line_init(stack_instruction_line_t *stack) {
+  stack->capacity = UINT8_MAX;
+  stack->count = 0;
+}
+
+bool stack_push(stack_instruction_line_t *stack, instruction_line_t *value) {
+  if (stack->count < stack->capacity) {
+    stack->store[stack->count] = *value;
+    stack->count++;
+    return true;
+  }
+  return false;
+}
+
 /**
- * @brief Parseia e printa as informações extraídas do source asm
- * @todo João, temporário isso aqui
+ * @brief Parseia linhas de instrução a partir do código fonte
  * 
  * @param source 
+ * @param stack 
  * @return true 
  * @return false 
  */
-bool parse_and_print(const char *source)
+bool parse_source_to_instruction_line_stack(const char *source, stack_instruction_line_t *stack)
 {
   parsing_context_t parsing_context = {
     .source = source,
@@ -454,19 +474,17 @@ bool parse_and_print(const char *source)
 
     if (maybe_instruction_line.matched)
     {
-      print_instruction_line(&maybe_instruction_line.value);
+      stack_push(stack, &maybe_instruction_line.value);
     }
     else
     {
-      printf(">>>> falha: [%s] <<<<", maybe_instruction_line.error_message);
+      fprintf(stderr, ">>>> falha: [%s] <<<<", maybe_instruction_line.error_message);
       return false;
     }
 
     // Necessário para empurrar o cursor até o final do linha caso ela tenha acabado
     skip_whitespace(&parsing_context);
   }
-
-  printf("Programa parseado com sucesso.\n");
 
   return true;
 }

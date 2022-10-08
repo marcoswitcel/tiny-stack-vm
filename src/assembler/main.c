@@ -15,7 +15,22 @@ int main(int argc, const char *argv[])
   printf("---- LOADED program -----\n");
   const char *asm_file_content = read_file_as_cstring(argv[1]);
 
-  parse_and_print(asm_file_content);
+  stack_instruction_line_t stack;
+  stack_instruction_line_init(&stack);
+
+  bool parsed = parse_source_to_instruction_line_stack(asm_file_content, &stack);
+
+  if (!parsed) {
+    return EXIT_FAILURE;
+  }
+
+  printf("Parseado %d instruções\n", stack.count);
+  for (size_t i = 0; i < stack.count; i++)
+  {
+    print_instruction_line(&stack.store[i]);
+  }
+
+  printf("Programa parseado com sucesso.\n");
 
   return EXIT_SUCCESS;
 }
