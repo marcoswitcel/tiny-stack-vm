@@ -110,11 +110,16 @@ bool is_a_valid_operation_name(const char *operation_name)
   return lookup_instruction_for_symbol(operation_name).is;
 }
 
+typedef struct instruction_line
+{
+  const char *label;
+  inst_t instruction;
+} instruction_line_t;
+
 typedef struct maybe_instruction_line
 {
   bool matched;
-  const char *label;
-  inst_t instruction;
+  instruction_line_t value;
   const char *error_message;
 } maybe_instruction_line_t;
 
@@ -286,8 +291,8 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
 
     if (maybe_parsed.ok)
     {
-      maybe_instruction_line.label = maybe_parsed.symbol;
-      parsing_context->currentIndex += strlen(maybe_instruction_line.label) + 1;
+      maybe_instruction_line.value.label = maybe_parsed.symbol;
+      parsing_context->currentIndex += strlen(maybe_instruction_line.value.label) + 1;
     }
     else
     {
@@ -308,7 +313,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
 
     if (maybe_number.ok)
     {
-      maybe_instruction_line.instruction = (inst_t){
+      maybe_instruction_line.value.instruction = (inst_t){
         .type = INST_PUSH,
         .operand = maybe_number.number,
       };
@@ -328,7 +333,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     if (maybe_parsed.ok && is_a_valid_operation_name(maybe_parsed.symbol))
     {
       instructions_t inst = lookup_instruction_for_symbol(maybe_parsed.symbol).inst; 
-      maybe_instruction_line.instruction = (inst_t) {
+      maybe_instruction_line.value.instruction = (inst_t) {
         .type = inst,
         .operand = 0,
       };
@@ -348,7 +353,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
 
     if (maybe_number.ok)
     {
-      maybe_instruction_line.instruction.operand = maybe_number.number;
+      maybe_instruction_line.value.instruction.operand = maybe_number.number;
       parsing_context->currentIndex += strlen(maybe_number.literal_form);
     }
     else
@@ -366,7 +371,13 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
   return maybe_instruction_line;
 }
 
-
+/**
+ * @brief Recebe o caminho de um arquivo e lê seu conteúdo como se fosse uma
+ * string terminada com 'NULL'
+ * 
+ * @param file_path Caminho do arquivo
+ * @return const char* 
+ */
 const char* read_file_as_cstring(const char *file_path)
 {
   FILE *fd = fopen(file_path, "rb");
@@ -413,18 +424,18 @@ bool parse_and_print(const char *source)
 
     if (maybe_instruction_line.matched)
     {
-      if (maybe_instruction_line.label) {
+      if (maybe_instruction_line.value.label) {
         printf(
           "{ .label =  \"%s\", .opcode = %d, .operand = %d }\n",
-          maybe_instruction_line.label,
-          maybe_instruction_line.instruction.type,
-          maybe_instruction_line.instruction.operand
+          maybe_instruction_line.value.label,
+          maybe_instruction_line.value.instruction.type,
+          maybe_instruction_line.value.instruction.operand
         );
       } else {
         printf(
           "{ .label =  NULL, .opcode = %d, .operand = %d }\n",
-          maybe_instruction_line.instruction.type,
-          maybe_instruction_line.instruction.operand
+          maybe_instruction_line.value.instruction.type,
+          maybe_instruction_line.value.instruction.operand
         );
       }
       

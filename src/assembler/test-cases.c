@@ -30,9 +30,9 @@ void test02()
   {
     printf(
         "\nparsed symbol: %s, type(opcode): %d, operand: %d\n",
-        maybe_instruction_line.label,
-        maybe_instruction_line.instruction.type,
-        maybe_instruction_line.instruction.operand);
+        maybe_instruction_line.value.label,
+        maybe_instruction_line.value.instruction.type,
+        maybe_instruction_line.value.instruction.operand);
   }
 
   while (parsing_context.currentIndex < parsing_context.source_length)
@@ -43,9 +43,9 @@ void test02()
     {
       printf(
           "\nparsed symbol: %s, type(opcode): %d, operand: %d\n",
-          maybe_instruction_line.label,
-          maybe_instruction_line.instruction.type,
-          maybe_instruction_line.instruction.operand);
+          maybe_instruction_line.value.label,
+          maybe_instruction_line.value.instruction.type,
+          maybe_instruction_line.value.instruction.operand);
     }
     else
     {
