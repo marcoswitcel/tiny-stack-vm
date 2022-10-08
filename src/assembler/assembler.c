@@ -402,6 +402,24 @@ const char* read_file_as_cstring(const char *file_path)
   return (const char*) buffer;
 }
 
+void print_instruction_line(instruction_line_t *instruction_line)
+{
+  if (instruction_line->label) {
+    printf(
+      "{ .label =  \"%s\", .opcode = %d, .operand = %d }\n",
+      instruction_line->label,
+      instruction_line->instruction.type,
+      instruction_line->instruction.operand
+    );
+  } else {
+    printf(
+      "{ .label =  NULL, .opcode = %d, .operand = %d }\n",
+      instruction_line->instruction.type,
+      instruction_line->instruction.operand
+    );
+  }
+}
+
 /**
  * @brief Parseia e printa as informações extraídas do source asm
  * @todo João, temporário isso aqui
@@ -424,21 +442,7 @@ bool parse_and_print(const char *source)
 
     if (maybe_instruction_line.matched)
     {
-      if (maybe_instruction_line.value.label) {
-        printf(
-          "{ .label =  \"%s\", .opcode = %d, .operand = %d }\n",
-          maybe_instruction_line.value.label,
-          maybe_instruction_line.value.instruction.type,
-          maybe_instruction_line.value.instruction.operand
-        );
-      } else {
-        printf(
-          "{ .label =  NULL, .opcode = %d, .operand = %d }\n",
-          maybe_instruction_line.value.instruction.type,
-          maybe_instruction_line.value.instruction.operand
-        );
-      }
-      
+      print_instruction_line(&maybe_instruction_line.value);
     }
     else
     {
