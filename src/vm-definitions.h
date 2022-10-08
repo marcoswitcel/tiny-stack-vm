@@ -52,6 +52,21 @@ typedef enum instructions {
   INST_SWAP,
 } instructions_t;
 
+#define INSTRUCTION_NAMES_LIST(DO)\
+  DO(PLUS) \
+  DO(SUB) \
+  DO(PUSH) \
+  DO(JUMP) \
+  DO(DUP) \
+  DO(POP) \
+  DO(JUMP_NOT_ZERO) \
+  DO(JUMP_ZERO) \
+  DO(GREATER_THAN) \
+  DO(LOWER_THAN) \
+  DO(HALT) \
+  DO(WRITE) \
+  DO(SWAP)
+
 enum signals {
   OK,
   INVALID_INSTRUCTION,

@@ -97,6 +97,16 @@ optional_instruction_t lookup_instruction_for_symbol(const char *operation_name)
   return result;
 }
 
+const char* get_instruction_name(instructions_t instruction)
+{
+#define CASE_RETURN_STRING(name) case INST_##name: return #name;
+  switch(instruction) {
+    INSTRUCTION_NAMES_LIST(CASE_RETURN_STRING)
+    default: return "Não encontrado";
+  }
+#undef CASE_RETURN_STRING
+}
+
 /**
  * @brief Valida se o símbolo provido é um nome de instrução conhecido
  * @todo João, ajustar dependência dessa função na função de lookup
@@ -406,15 +416,17 @@ void print_instruction_line(instruction_line_t *instruction_line)
 {
   if (instruction_line->label) {
     printf(
-      "{ .label =  \"%s\", .opcode = %d, .operand = %d }\n",
+      "{ .label =  \"%s\", .opcode = %d, .inst_name = \"%s\" .operand = %d }\n",
       instruction_line->label,
       instruction_line->instruction.type,
+      get_instruction_name(instruction_line->instruction.type),
       instruction_line->instruction.operand
     );
   } else {
     printf(
-      "{ .label =  NULL, .opcode = %d, .operand = %d }\n",
+      "{ .label =  NULL, .opcode = %d, .inst_name = \"%s\" .operand = %d }\n",
       instruction_line->instruction.type,
+      get_instruction_name(instruction_line->instruction.type),
       instruction_line->instruction.operand
     );
   }
