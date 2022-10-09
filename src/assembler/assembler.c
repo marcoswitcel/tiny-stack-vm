@@ -82,17 +82,17 @@ optional_instruction_t lookup_instruction_for_symbol(const char *operation_name)
 {
   optional_instruction_t result = {0};
 
-  if (!strcmp(operation_name, "PUSH")) {
-    result.is = true;
-    result.inst = INST_PUSH;
-    return result;
+// @note Para cada símbolo monta um if que checa se a string é igual
+// ao nome da instrução e retorna o opcode da instrução
+#define IF_EQUAL_RETURN_INFO(name)     \
+  if (!strcmp(operation_name, #name)) {\
+    result.is = true;                  \
+    result.inst = INST_##name;         \
+    return result;                     \
   }
-
-  if (!strcmp(operation_name, "PLUS")) {
-    result.is = true;
-    result.inst = INST_PLUS;
-    return result;
-  }
+  
+  INSTRUCTION_NAMES_LIST(IF_EQUAL_RETURN_INFO)
+#undef IF_EQUAL_RETURN_INFO
 
   return result;
 }
