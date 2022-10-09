@@ -87,6 +87,8 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     vm->halted = true;
   break;
   case INST_WRITE:
+    // @todo João, revisar e talvez trocar o sinal retornado abaixo
+    if (vm->index < 1) return STACK_UNDERFLOW;
     printf("%c", vm->stack[vm->index - 1]);
   break;
   case INST_SWAP:
