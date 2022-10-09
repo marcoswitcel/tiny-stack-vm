@@ -132,6 +132,8 @@ void execute_program(vm_instance_t *vm)
     enum signals signal = execute_inst(vm, &vm->program.instructions[vm->ip]);
 
     if (signal != OK) {
+      // @todo João, tentar trazer mais dados do sinal, talvez isso apenas
+      // em modo verboso
       printf("Execução interrompida erro %s\n", signal_to_name(signal));
       goto end;
     }

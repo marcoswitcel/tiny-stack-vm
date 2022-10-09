@@ -352,7 +352,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     }
     else
     {
-      // @todo João, temporário
+      // @todo João, melhorar mensagens de erro num geral, começar por essa
       maybe_instruction_line.error_message = "Esperava uma instrução valida";
       maybe_instruction_line.matched = false;
       return maybe_instruction_line;
