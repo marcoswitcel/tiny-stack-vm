@@ -488,3 +488,30 @@ bool parse_source_to_instruction_line_stack(const char *source, stack_instructio
 
   return true;
 }
+
+bool write_program_out(const char *file_path, stack_instruction_line_t *stack)
+{
+  if (stack->count == 0)
+  {
+    fprintf(stderr, "programa vazio não gerado");
+    return false;
+  }
+
+  FILE *fd = fopen(file_path, "wb");
+  
+  if (fd == NULL)
+  {
+    fprintf(stderr, "erro ao tentar abrir o arquivo de saída: %s", file_path);
+    exit(EXIT_FAILURE);
+  }
+
+  for (size_t i = 0; i < stack->count; i++)
+  {
+    // @todo João, validar o retorno do fwrite e caso não escrever tudo
+    // notificar o usuário do possível arquivo corrompido
+    fwrite(&stack->store[i].instruction, sizeof(inst_t), 1, fd);
+  }
+
+  fclose(fd);
+  return true;
+}

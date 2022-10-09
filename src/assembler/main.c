@@ -32,5 +32,10 @@ int main(int argc, const char *argv[])
 
   printf("Programa parseado com sucesso.\n");
 
+  const char *output_file_name = "out.out";
+  printf("Gerando arquivo: %s\n", output_file_name);
+
+  write_program_out(output_file_name, &stack);
+
   return EXIT_SUCCESS;
 }
