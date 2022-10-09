@@ -147,7 +147,8 @@ maybe_parsed_t parse_symbol(const parsing_context_t *parsing_context)
   char current_value;
 
   while ((current_value = *source) && ((current_value >= 'a' && 'z' >= current_value) ||
-                                       (current_value >= 'A' && 'Z' >= current_value)))
+                                       (current_value >= 'A' && 'Z' >= current_value) ||
+                                       (current_value == '_')))
   {
     source++;
   }
