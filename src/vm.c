@@ -143,7 +143,7 @@ void execute_program(vm_instance_t *vm)
     max_execution_ticks--;
   }
 
-end:
+end: // @todo João, refatora para isso também só ser exibido quando requisitado
   printf("ticks %ld\n", 115 - max_execution_ticks);
 }
 
