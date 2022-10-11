@@ -12,11 +12,26 @@ typedef struct command_line_args {
   size_t max_ticks;
 } command_line_arguments_t;
 
+bool is_string_present_in_argv(const char *switch_name, int argc, const char *argv[])
+{
+  for (int i = 0; i < argc; i++)
+  {
+    if (!strcmp(argv[i], switch_name))
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
 
 int main(int argc, const char *argv[])
 {
   // @todo João, fazer as funções que consomem argumentos
   command_line_arguments_t command_line_args = {0};
+
+  command_line_args.verbose = is_string_present_in_argv("--verbose", argc, argv);
+  command_line_args.dump_stack = is_string_present_in_argv("--dump-stack", argc, argv);
 
   // @todo João melhorar forma de consumir parâmetros e principalmente
   // adicionar parâmetros para acionar ou não funcionalidade abaixo
@@ -28,7 +43,8 @@ int main(int argc, const char *argv[])
   // @todo João, deixar esse print apenas em modo verboso
   if (command_line_args.verbose) 
   {
-    printf("---- LOADED program -----\n");
+    printf("---- Carregando programa -----\n");
+    printf("[ %s ]\n", argv[1]);
   }
   vm_instance_t vm = {0};
   vm.program = read_program_from_file(argv[1]);

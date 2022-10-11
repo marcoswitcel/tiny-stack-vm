@@ -125,6 +125,7 @@ const char *signal_to_name(enum signals signal)
 
 void execute_program(vm_instance_t *vm)
 {
+  // @todo João, refatorar e permitir a configuração do max_ticks
   size_t max_execution_ticks = 115;
 
   while (vm->ip < vm->program.number_of_instructions && max_execution_ticks)
@@ -135,15 +136,17 @@ void execute_program(vm_instance_t *vm)
       // @todo João, tentar trazer mais dados do sinal, talvez isso apenas
       // em modo verboso
       printf("Execução interrompida erro %s\n", signal_to_name(signal));
-      goto end;
+      break;
     }
+
     if (vm->halted) {
-      goto end;
+      break;
     }
+
     max_execution_ticks--;
   }
 
-end: // @todo João, refatora para isso também só ser exibido quando requisitado
+  // @todo João, refatora para isso também só ser exibido quando requisitado
   printf("ticks %ld\n", 115 - max_execution_ticks);
 }
 
