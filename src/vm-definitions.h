@@ -92,6 +92,7 @@ typedef struct vm_instance {
   size_t ip;
   program_t program;
   bool halted;
+  size_t tick_count;
 } vm_instance_t;
 
 #endif // VM_DEFINITIONS_H

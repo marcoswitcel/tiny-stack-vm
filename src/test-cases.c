@@ -24,8 +24,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.index == 3 && "O programa deveria deixar três valores na stack");
 
@@ -51,8 +54,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     dump_stack_memory(&vm);
   }
@@ -70,8 +76,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.stack[2] == 4 && "O valor 2 deveria estar nesse endereço");
     assert(vm.stack[3] == 3 && "O valor 3 deveria estar nesse endereço");
@@ -93,8 +102,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.stack[2] == 1 && "O valor 1 deveria estar nesse endereço");
     assert(vm.stack[3] == 0 && "O valor 0 deveria estar nesse endereço");
@@ -118,8 +130,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.stack[0] == 10 && "O valor 10 deveria estar nesse endereço");
     assert(vm.stack[9] == 1 && "O valor 1 deveria estar nesse endereço");
@@ -140,8 +155,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.stack[0] == 10 && "O valor 10 deveria estar nesse endereço");
     assert(vm.stack[1] == 8 && "O valor 8 deveria estar nesse endereço");
@@ -164,8 +182,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.stack[0] == 0 && "O valor 0 deveria estar nesse endereço");
     assert(vm.stack[1] == 23 && "O valor 23 deveria estar nesse endereço");
@@ -194,8 +215,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.stack[0] == 1 && "O valor 1 deveria estar nesse endereço");
     assert(vm.stack[1] == 0 && "O valor 0 deveria estar nesse endereço");
@@ -218,8 +242,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.stack[0] == 10 && "O valor 10 deveria estar nesse endereço");
     assert(vm.stack[1] == 5 && "O valor 5 deveria estar nesse endereço");
@@ -248,8 +275,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.stack[0] == 105 && "O valor 105 deveria estar nesse endereço");
     assert(vm.stack[1] == 0 && "O valor 0 deveria estar nesse endereço");
@@ -275,8 +305,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     assert(vm.stack[0] == 25 && "O valor 25 deveria estar nesse endereço");
     assert(vm.stack[1] == 99 && "O valor 99 deveria estar nesse endereço");
@@ -319,8 +352,11 @@ void test_cases()
       .instructions = (inst_t *) &instructions,
       .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
     };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
 
-    execute_program(&vm);
+    execute_program(&vm, &config);
 
     // assert(vm.stack[0] == 25 && "O valor 25 deveria estar nesse endereço");
 

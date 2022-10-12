@@ -123,13 +123,17 @@ const char *signal_to_name(enum signals signal)
   return "";
 }
 
-void execute_program(vm_instance_t *vm)
+typedef struct execution_configuration
 {
-  // @todo João, refatorar e permitir a configuração do max_ticks
-  size_t max_execution_ticks = 115;
+  bool is_limited;
+  size_t max_execution_ticks;
+} execution_configuration_t;
 
-  while (vm->ip < vm->program.number_of_instructions && max_execution_ticks)
+void execute_program(vm_instance_t *vm, execution_configuration_t *configuration)
+{
+  while (vm->ip < vm->program.number_of_instructions)
   {
+    vm->tick_count++;
     enum signals signal = execute_inst(vm, &vm->program.instructions[vm->ip]);
 
     if (signal != OK) {
@@ -143,11 +147,11 @@ void execute_program(vm_instance_t *vm)
       break;
     }
 
-    max_execution_ticks--;
-  }
-
-  // @todo João, refatora para isso também só ser exibido quando requisitado
-  printf("ticks %ld\n", 115 - max_execution_ticks);
+    if (configuration->is_limited && vm->tick_count >= configuration->max_execution_ticks)
+    {
+      break;
+    }
+  }  
 }
 
 void dump_stack_memory(vm_instance_t *vm)
