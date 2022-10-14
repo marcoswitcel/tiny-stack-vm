@@ -319,6 +319,37 @@ void test_cases()
     dump_stack_memory(&vm);
   }
 
+  /**
+   * @brief Validando o comando PLUS, indiretamente validando o PUSH
+   */
+  {
+    inst_t instructions[] = {
+      INST(PUSH, 3),
+      INST(PUSH, 4),
+      INST(PLUS, 0),
+      INST(PUSH, 22),
+      INST(PUSH, 5),
+      INST(PLUS, 0),
+    };
+
+    vm_instance_t vm = {0};
+    vm.program = (program_t) {
+      .instructions = (inst_t *) &instructions,
+      .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+    };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
+
+    execute_program(&vm, &config);
+
+    assert(vm.stack[0] == 7 && "O valor 7 deveria estar nesse endereço");
+    assert(vm.stack[1] == 27 && "O valor 27 deveria estar nesse endereço");
+    assert(vm.index == 2 && "Deveriam restar apenas dois elementos na stack");
+
+    dump_stack_memory(&vm);
+  }
+
   {
     /**
      * @brief Imprimir um triângulo de asteriscos de 10 linhas
