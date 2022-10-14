@@ -3,7 +3,7 @@
 
 #include <assert.h>
 
-#include "./vm-definitions.h"
+#include "./vm/vm-definitions.h"
 
 /**
  * @note Garante que a flag `-fshort-enums` tenha sido passada ao compilador,

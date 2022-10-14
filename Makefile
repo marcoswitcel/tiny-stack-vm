@@ -5,11 +5,10 @@ LFLAGS = -lm
 setup-build-dirs:
 	@mkdir bin bin/tests bin/logs 
 
-tests-vm: src/test-cases.c
-	$(CC) $(CFLAGS) src/test-cases.c -o bin/tests/test-tsvm $(LFLAGS)
-
-vm: src/main.c
-	$(CC) $(CFLAGS) src/main.c -o bin/tsvm $(LFLAGS)
+tests-vm: src/vm/test-cases.c
+	$(CC) $(CFLAGS) src/vm/test-cases.c -o bin/tests/test-tsvm $(LFLAGS)
+vm: src/vm/main.c
+	$(CC) $(CFLAGS) src/vm/main.c -o bin/tsvm $(LFLAGS)
 
 tests-assembler: src/assembler/test-cases.c
 	$(CC) $(CFLAGS) src/assembler/test-cases.c -o bin/tests/test-tsassembler $(LFLAGS)

@@ -3,7 +3,7 @@
 #include <assert.h>
 
 #include "./vm.c"
-#include "./compiler-requirements.h"
+#include "../compiler-requirements.h"
 
 typedef struct command_line_args {
   bool verbose;
