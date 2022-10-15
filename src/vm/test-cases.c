@@ -350,6 +350,40 @@ void test_cases()
     dump_stack_memory(&vm);
   }
 
+  /**
+   * @brief Validando o comando CALL, indiretamente validando o comando HALT
+   */
+  {
+    inst_t instructions[] = {
+      INST(JUMP, 5),
+      INST(PUSH, 3),
+      INST(PUSH, 3),
+      INST(PLUS, 0),
+      INST(HALT, 0),
+      INST(PUSH, 2),
+      INST(PUSH, 2),
+      INST(PLUS, 0),
+      INST(CALL, 1),
+    };
+
+    vm_instance_t vm = {0};
+    vm.program = (program_t) {
+      .instructions = (inst_t *) &instructions,
+      .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+    };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
+
+    execute_program(&vm, &config);
+
+    assert(vm.stack[0] == 4 && "O valor 4 deveria estar nesse endereço");
+    assert(vm.stack[1] == 6 && "O valor 6 deveria estar nesse endereço");
+    assert(vm.index == 2 && "Deveriam restar apenas dois elementos na stack");
+
+    dump_stack_memory(&vm);
+  }
+
   {
     /**
      * @brief Imprimir um triângulo de asteriscos de 10 linhas

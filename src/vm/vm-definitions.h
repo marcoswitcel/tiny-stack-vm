@@ -41,6 +41,7 @@ typedef enum instructions {
   INST_PUSH,
   INST_JUMP,
   INST_DUP,
+  INST_CALL,
   // O Comando pop apenas decrementa o ponteiro da stack, ele não zera a celula liberada
   INST_POP,
   INST_JUMP_NOT_ZERO,
@@ -57,6 +58,7 @@ typedef enum instructions {
   DO(SUB) \
   DO(PUSH) \
   DO(JUMP) \
+  DO(CALL) \
   DO(DUP) \
   DO(POP) \
   DO(JUMP_NOT_ZERO) \
@@ -70,8 +72,10 @@ typedef enum instructions {
 enum signals {
   OK,
   INVALID_INSTRUCTION,
+  INVALID_CALL,
   STACK_OVERFLOW,
   STACK_UNDERFLOW,
+  CALL_STACK_OVERFLOW,
   INVALID_JUMP_POSITION,
   INVALID_OPERAND,
 };
@@ -93,6 +97,8 @@ typedef struct vm_instance {
   program_t program;
   bool halted;
   size_t tick_count;
+  uint8_t callstack[STACK_MAX_SIZE];
+  uint8_t callstack_index;
 } vm_instance_t;
 
 #endif // VM_DEFINITIONS_H
