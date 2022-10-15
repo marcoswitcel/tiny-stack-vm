@@ -12,6 +12,7 @@
 - [ ] Ajustar o parser para suportar operadores no formato de caractere literal, exemplo: '*' para o código do asterísco na tabela ascii
 - [ ] Ajustar o parser para suportar referencias a labels no campo operador e ajustar para gerar o bytecode apropriado
 - [ ] Analisar e adicionar mais instruções a VM, implementar formas de incremento e decremento, invocação de função e o que mais for interessante para o uso geral e perfomático (pesquisar)
+- [ ] Implementar o suporte ao comando para invocar um trecho de código (chamar função) e retornar para o lugar da invocação (callsite)
 - [ ] Definir a lista de instruções seus possíveis parâmetros (formalização)
 
 
