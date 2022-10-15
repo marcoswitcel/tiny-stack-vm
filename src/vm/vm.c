@@ -108,6 +108,14 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
     vm->ip = inst->operand;
     return OK;
   break;
+  case INST_RETURN:
+    if (vm->callstack_index < 1) return CALL_STACK_UNDERFLOW;
+    uint8_t return_to_position = vm->callstack[vm->callstack_index - 1];
+    if (return_to_position >= vm->program.number_of_instructions) return INVALID_CALL;
+    vm->ip = return_to_position;
+    vm->callstack_index--;
+    return OK;
+  break;
   default:
     return INVALID_INSTRUCTION;
   }
@@ -128,6 +136,7 @@ const char *signal_to_name(enum signals signal)
   case INVALID_OPERAND: return "INVALID_OPERAND";
   case INVALID_CALL: return "INVALID_CALL";
   case CALL_STACK_OVERFLOW: return "CALL_STACK_OVERFLOW";
+  case CALL_STACK_UNDERFLOW: return "CALL_STACK_UNDERFLOW";
   }
   assert(0 || "Unreacheable");
   return "";

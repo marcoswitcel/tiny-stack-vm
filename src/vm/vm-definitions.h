@@ -42,6 +42,7 @@ typedef enum instructions {
   INST_JUMP,
   INST_DUP,
   INST_CALL,
+  INST_RETURN,
   // O Comando pop apenas decrementa o ponteiro da stack, ele não zera a celula liberada
   INST_POP,
   INST_JUMP_NOT_ZERO,
@@ -59,6 +60,7 @@ typedef enum instructions {
   DO(PUSH) \
   DO(JUMP) \
   DO(CALL) \
+  DO(RETURN) \
   DO(DUP) \
   DO(POP) \
   DO(JUMP_NOT_ZERO) \
@@ -76,6 +78,7 @@ enum signals {
   STACK_OVERFLOW,
   STACK_UNDERFLOW,
   CALL_STACK_OVERFLOW,
+  CALL_STACK_UNDERFLOW,
   INVALID_JUMP_POSITION,
   INVALID_OPERAND,
 };
