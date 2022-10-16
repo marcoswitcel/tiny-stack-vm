@@ -111,7 +111,16 @@ enum signals execute_inst(vm_instance_t *vm, inst_t *inst)
   case INST_RETURN:
     if (vm->callstack_index < 1) return CALL_STACK_UNDERFLOW;
     uint8_t return_to_position = vm->callstack[vm->callstack_index - 1];
-    if (return_to_position >= vm->program.number_of_instructions) return INVALID_CALL;
+    /**
+     * @todo João, avaliar melhor a forma como gerencio o endereço de retorno,
+     * quando for a última instrução o endereço armazenado pelo comando CALL
+     * será um endereço inválido, uma céula a mais do último endereço válido.
+     * Por hora decidi apenas comentar a validação nesse ponto, mas posso 
+     * também reformular a forma de armazenar e incrementar o ponteiro de 
+     * retorno para incrementar apenas no momento do retorno. Se não causar
+     * problemas posso manter assim.
+     */
+    // if (return_to_position >= vm->program.number_of_instructions) return INVALID_CALL;
     vm->ip = return_to_position;
     vm->callstack_index--;
     return OK;
