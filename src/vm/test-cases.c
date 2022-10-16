@@ -418,6 +418,43 @@ void test_cases()
     dump_stack_memory(&vm);
   }
 
+   /**
+   * @brief Validando o comando CALL quando chamado de dentro de outra função
+   */
+  {
+    inst_t instructions[] = {
+      INST(JUMP, 9),
+      INST(WRITE, 0),
+      INST(POP, 0),
+      INST(RETURN, 0),
+      INST(PUSH, 95),
+      INST(PUSH, 3),
+      INST(PLUS, 0),
+      INST(CALL, 1),
+      INST(RETURN, 0),
+      INST(CALL, 4),
+      INST(CALL, 4),
+      INST(CALL, 4),
+      INST(CALL, 4),
+    };
+
+    vm_instance_t vm = {0};
+    vm.program = (program_t) {
+      .instructions = (inst_t *) &instructions,
+      .number_of_instructions = sizeof(instructions) / sizeof(instructions[0]),
+    };
+    execution_configuration_t config = {0};
+    config.is_limited = true;
+    config.max_execution_ticks = 115;
+
+    execute_program(&vm, &config);
+
+    assert(vm.callstack_index == 0 && "Não deveriam restar endereços de retorno na callstack");
+    assert(vm.index == 0 && "Não deveriam restar valores na stack");
+
+    dump_stack_memory(&vm);
+  }
+
   {
     /**
      * @brief Imprimir um triângulo de asteriscos de 10 linhas
