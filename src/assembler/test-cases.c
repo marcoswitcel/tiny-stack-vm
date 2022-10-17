@@ -67,11 +67,19 @@ void test_number_literal_as_number(void)
   assert(number_literal_as_number("256") < 0 && "Parasenado corretamente");
 }
 
+void test_char_literal_as_number(void)
+{
+  assert(char_literal_as_number("a") == 'a' && "Parasenado corretamente");
+  assert(char_literal_as_number("B") == 'B' && "Parasenado corretamente");
+  assert(char_literal_as_number("\\n") == '\n' && "Parasenado corretamente");
+}
+
 void test_cases(void)
 {
   test02();
   // Teste de subfuncionalidades
   test_number_literal_as_number();
+  test_char_literal_as_number();
 }
 
 int main(void)

@@ -281,6 +281,31 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
 }
 
 /**
+ * @brief Função que converte um char literal para um char
+ * @todo João, falta terminar e validar
+ * 
+ * @param char_literal_form 
+ * @return uint8_t 
+ */
+uint8_t char_literal_as_number(const char *char_literal_form)
+{
+  size_t size = strlen(char_literal_form);
+
+  if (size == 0)
+  {
+    return 0;
+  }
+
+  // @todo João, achar uma forma elegante de declarar os valores possíveis aqui
+  if (size > 1 && (*char_literal_form == '\\' && (*(char_literal_form+1) == 'n')))
+  {
+    return 10;
+  }
+
+  return (uint8_t) *char_literal_form;
+}
+
+/**
  * @brief Parseia um linha lógica. A linha é formada por uma etiqueta/marcação,
  * opcional, seguida por um nome de instrução
  *
