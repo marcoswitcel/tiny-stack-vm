@@ -5,7 +5,7 @@ O intuíto desse repositório é conter e documentar os esforços feitos para a 
 
 A máquina encontra-se em construção, e a ideia chave é o uso um ambiente restrito, stack de 255 bytes com suporte a acesso randômico de memória.
 
-## Alguns do materiais consultados
+## Alguns dos materiais consultados
 
 * [https://www.tecmint.com/best-hex-editors-for-linux/](https://www.tecmint.com/best-hex-editors-for-linux/)
 * [https://stackoverflow.com/questions/14002954/c-programming-how-to-read-the-whole-file-contents-into-a-buffer](https://stackoverflow.com/questions/14002954/c-programming-how-to-read-the-whole-file-contents-into-a-buffer)
