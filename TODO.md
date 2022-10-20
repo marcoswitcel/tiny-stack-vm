@@ -16,6 +16,8 @@
 - [ ] Definir a lista de instruções e seus possíveis parâmetros (formalização)
 - [ ] Melhorar a forma de retornar sinais da VM. Trazer mais informações contextuais (instrução executada e operando)
 - [ ] Resolver ambiguidade na hora de identificar se o programa terminou por halt, por não ter mais instruções para executar ou por atingir o limite de ticks especificados
+- [ ] Melhorar os programas de teste da suite de teste da VM, revisar para ter pelo menos um teste por instrução
+- [ ] Melhorar os a suite de teste do assembler, muito incompleta atualmente
 
 
 https://gist.github.com/Lewkos-snippets/3873832
