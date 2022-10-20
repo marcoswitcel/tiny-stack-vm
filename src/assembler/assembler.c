@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include <assert.h>
 
 #include "../vm/vm-definitions.h"
@@ -281,6 +282,82 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
 }
 
 /**
+ * @brief Constante que representa o tipo de áspa usada para iniciar e terminar caracteres literais
+ */
+static const char CHAR_LITERAL_QUOTE = '\'';
+
+/**
+ * @brief Função que define e parseia um caractere literal
+ * @todo João, desenvolver testes para essa funcionalidade
+ * 
+ * @param parsing_context 
+ * @return maybe_parsed_number_t 
+ */
+maybe_parsed_number_t parse_char(const parsing_context_t *parsing_context)
+{
+  maybe_parsed_number_t maybe_number = {0};
+
+  const char *source = get_current_address(parsing_context);
+  char current_char = *source;
+
+  #define GET_NEXT_CHAR source++; current_char = *source;
+
+  if (current_char == '\'')
+  {
+    GET_NEXT_CHAR;
+
+    if (isprint(current_char) && !is_whitespace(current_char) && current_char != '\'')
+    {
+      if (current_char == '\\')
+      {
+        GET_NEXT_CHAR;
+        if (current_char == 'n')
+        {
+          GET_NEXT_CHAR;
+          if (current_char == '\'')
+          {
+            GET_NEXT_CHAR;
+            if (current_char == '\0' || is_whitespace(current_char))
+            {
+              maybe_number.ok = true;
+              maybe_number.number = 10;
+              maybe_number.literal_form = "'\\n'";
+              return maybe_number;
+            }
+          }
+        }
+      }
+      else
+      {
+        uint8_t possible_value = (uint8_t) current_char;
+        GET_NEXT_CHAR;
+        if (current_char == '\'')
+        {
+          GET_NEXT_CHAR;
+          if (current_char == '\0' || is_whitespace(current_char))
+          {
+            size_t literal_form_size = source - get_current_address(parsing_context);
+            char *literal_form = malloc(sizeof(char) * literal_form_size + 1);
+            memcpy(literal_form, get_current_address(parsing_context), literal_form_size);
+            literal_form[literal_form_size] = '\0';
+
+            maybe_number.ok = true;
+            maybe_number.number = possible_value;
+            maybe_number.literal_form = literal_form;
+            return maybe_number;
+          }
+        }
+      }
+    }
+  }
+
+  maybe_number.ok = false;
+  maybe_number.error_message = "Char literal invalido";
+
+  return maybe_number;
+}
+
+/**
  * @brief Função que converte um char literal para um char
  * @todo João, falta terminar e validar
  * 
@@ -362,6 +439,25 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
       return maybe_instruction_line;
     }
   }
+  else if (current_value == CHAR_LITERAL_QUOTE)
+  {
+    maybe_parsed_number_t maybe_number = parse_char(parsing_context);
+
+    if (maybe_number.ok)
+    {
+      maybe_instruction_line.value.instruction = (inst_t){
+        .type = INST_PUSH,
+        .operand = maybe_number.number,
+      };
+      parsing_context->currentIndex += strlen(maybe_number.literal_form);
+    }
+    else
+    {
+      maybe_instruction_line.error_message = "Esperava um número (push char literal)";
+      maybe_instruction_line.matched = false;
+      return maybe_instruction_line;
+    }
+  }
   else
   {
     maybe_parsed_t maybe_parsed = parse_symbol(parsing_context);
@@ -385,6 +481,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
 
     skip_whitespace(parsing_context);
 
+    // @todo João, ajustar para usar a função `parse_char` aqui também
     maybe_parsed_number_t maybe_number = parse_number(parsing_context);
 
     if (maybe_number.ok)
