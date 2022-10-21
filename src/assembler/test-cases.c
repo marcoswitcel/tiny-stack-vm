@@ -4,11 +4,38 @@
 
 #include "./assembler.c"
 
+void test_skip_whitespace()
+{
+  const char *text = "  . texto \n nome   \n \n";
+
+  parsing_context_t parsing_context = {
+    .source = text,
+    .currentIndex = 0,
+    .source_length = strlen(text),
+  };
+
+  skip_whitespace(&parsing_context);
+  assert(parsing_context.currentIndex == 2 && "Deveria avançar até o primeiro caractere");
+
+  parsing_context.currentIndex = 2;
+  skip_whitespace(&parsing_context);
+  assert(parsing_context.currentIndex == 2 && "Não deveria avançar se não estiver em um caractere 'whitespace'");
+
+  parsing_context.currentIndex = 3;
+  skip_whitespace(&parsing_context);
+  assert(parsing_context.currentIndex == 4 && "Deveria avançar até o primeiro caractere");
+
+  parsing_context.currentIndex = 9;
+  skip_whitespace(&parsing_context);
+  assert(parsing_context.currentIndex == 12 && "Deveria avançar até o primeiro caractere");
+
+  parsing_context.currentIndex = 16;
+  skip_whitespace(&parsing_context);
+  assert(parsing_context.currentIndex == parsing_context.source_length && "Deveria avançar até o primeiro caractere");
+}
+
 void test02()
 {
-  // static inst_t instructions[STACK_MAX_SIZE] = {0};
-  // size_t instructions_size = 0;
-
   // Primeiro exemplo a ser parseado
   const char *text = "  .teste PUSH 25\n PUSH   50\nPLUS 0\n";
 
@@ -80,6 +107,7 @@ void test_cases(void)
   // Teste de subfuncionalidades
   test_number_literal_as_number();
   test_char_literal_as_number();
+  test_skip_whitespace();
 }
 
 int main(void)
