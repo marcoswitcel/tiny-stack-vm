@@ -34,9 +34,6 @@ static inline const char* get_current_address(const parsing_context_t *parsing_c
   return parsing_context->source + parsing_context->currentIndex;
 }
 
-// @todo João, revisar o tamanho máximo a memória de instruções
-// static inst_t instructions[STACK_MAX_SIZE] = {0};
-
 static inline bool is_whitespace(char value)
 {
   return (value == ' ' || value == '\t' || value == '\r' || value == '\n');
