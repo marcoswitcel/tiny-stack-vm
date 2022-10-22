@@ -489,6 +489,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     }
     else
     {
+      // @todo João, aqui retorna o nome da instrução que estava sendo parseada
       maybe_instruction_line.error_message = "Esperava um número";
       maybe_instruction_line.matched = false;
       return maybe_instruction_line;

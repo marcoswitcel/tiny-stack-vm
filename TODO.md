@@ -18,6 +18,11 @@
 - [ ] Resolver ambiguidade na hora de identificar se o programa terminou por halt, por não ter mais instruções para executar ou por atingir o limite de ticks especificados
 - [ ] Melhorar os programas de teste da suite de teste da VM, revisar para ter pelo menos um teste por instrução
 - [ ] Melhorar os a suite de teste do assembler, muito incompleta atualmente
+- [ ] Melhorar as informações providas pelo assembler quando o programa contém algum erro sintático
+
+## Bugs
+- [ ] Char literal não está aceitando espaço
+- [ ] o comando "CALL 1" quando na última linha e sem espaço ou enter após está retornado "esperava um número" ao invés de parsear corretamente
 
 
 https://gist.github.com/Lewkos-snippets/3873832

@@ -1,0 +1,25 @@
+JUMP 32
+.prita_ola_mundo 
+    'o'
+    WRITE 0 POP 0
+    'l'
+    WRITE 0 POP 0
+    'a'
+    WRITE 0 POP 0
+    '\n'
+    WRITE 0 POP 0    
+    'm'
+    WRITE 0 POP 0
+    'u'
+    WRITE 0 POP 0
+    'n'
+    WRITE 0 POP 0
+    'd'
+    WRITE 0 POP 0
+    'o'
+    WRITE 0 POP 0
+    '\n'
+    WRITE 0 POP 0
+RETURN 0
+
+CALL 1
