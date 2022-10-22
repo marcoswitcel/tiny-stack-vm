@@ -34,15 +34,14 @@ void test_skip_whitespace()
   assert(parsing_context.currentIndex == parsing_context.source_length && "Deveria avançar até o primeiro caractere");
 }
 
-void test02()
+void test_parseando_um_programa_simples()
 {
-  // Primeiro exemplo a ser parseado
   const char *text = "  .teste PUSH 25\n PUSH   50\nPLUS 0\n";
 
   parsing_context_t parsing_context = {
-      .source = text,
-      .currentIndex = 0,
-      .source_length = strlen(text),
+    .source = text,
+    .currentIndex = 0,
+    .source_length = strlen(text),
   };
 
   skip_whitespace(&parsing_context);
@@ -103,7 +102,7 @@ void test_char_literal_as_number(void)
 
 void test_cases(void)
 {
-  test02();
+  test_parseando_um_programa_simples();
   // Teste de subfuncionalidades
   test_number_literal_as_number();
   test_char_literal_as_number();
