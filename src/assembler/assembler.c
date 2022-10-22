@@ -244,20 +244,20 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
       if (number < 0)
       {
         maybe_number.ok = false;
-        maybe_number.error_message = "Numero invalido";
+        maybe_number.error_message = "Número inválido";
         free(literal_form);
       }
       else
       {
         maybe_number.ok = true;
-        maybe_number.number = (uint8_t)number;
+        maybe_number.number = (uint8_t) number;
         maybe_number.literal_form = literal_form;
       }
     }
     else
     {
       maybe_number.ok = false;
-      maybe_number.error_message = "Numero invalido";
+      maybe_number.error_message = "Número inválido";
     }
   } else if (current_value == '0') {
     source++;
@@ -271,10 +271,11 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
     else
     {
       maybe_number.ok = false;
-      maybe_number.error_message = "Numero invalido, nao pode começar com zero";
+      maybe_number.error_message = "Número inválido, não pode começar com zero";
     }
   }
 
+  maybe_number.error_message = "Número inválido, não há um dígito no endereço atual";
   return maybe_number;
 }
 

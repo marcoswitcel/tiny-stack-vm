@@ -34,6 +34,94 @@ void test_skip_whitespace()
   assert(parsing_context.currentIndex == parsing_context.source_length && "Deveria avançar até o primeiro caractere");
 }
 
+void test_parse_number(void)
+{
+  const char *source = "    155 0 23b 255 256 12a";
+
+  parsing_context_t parsing_context = {
+    .source = source,
+    .currentIndex = 0,
+    .source_length = strlen(source),
+  };
+
+  {
+    parsing_context.currentIndex = 0;
+    maybe_parsed_number_t result = parse_number(&parsing_context);
+
+    assert(result.ok == false && "Não deveria parsear nada");
+    assert(result.error_message != NULL && strlen(result.error_message) && "A mensagem de erro deve ser uma string não vazia");
+  }
+
+  {
+    parsing_context.currentIndex = 4;
+    maybe_parsed_number_t result = parse_number(&parsing_context);
+
+    assert(result.ok && "Deveria parsear corretamente");
+    assert(result.literal_form != NULL && strlen(result.literal_form) && "A forma literal deve ser uma string não vazia");
+    assert(result.number == 155 && "O número esperado era");
+  }
+
+  {
+    parsing_context.currentIndex = 5;
+    maybe_parsed_number_t result = parse_number(&parsing_context);
+
+    assert(result.ok && "Deveria parsear corretamente");
+    assert(result.literal_form != NULL && strlen(result.literal_form) && "A forma literal deve ser uma string não vazia");
+    assert(result.number == 55 && "O número esperado era");
+  }
+
+  {
+    parsing_context.currentIndex = 6;
+    maybe_parsed_number_t result = parse_number(&parsing_context);
+
+    assert(result.ok && "Deveria parsear corretamente");
+    assert(result.literal_form != NULL && strlen(result.literal_form) && "A forma literal deve ser uma string não vazia");
+    assert(result.number == 5 && "O número esperado era");
+  }
+
+  {
+    parsing_context.currentIndex = 8;
+    maybe_parsed_number_t result = parse_number(&parsing_context);
+
+    assert(result.ok && "Deveria parsear corretamente");
+    assert(result.literal_form != NULL && strlen(result.literal_form) && "A forma literal deve ser uma string não vazia");
+    assert(result.number == 0 && "O número esperado era");
+  }
+
+  {
+    parsing_context.currentIndex = 10;
+    maybe_parsed_number_t result = parse_number(&parsing_context);
+
+    assert(result.ok == false && "Não deveria parsear nada");
+    assert(result.error_message != NULL && strlen(result.error_message) && "A mensagem de erro deve ser uma string não vazia");
+  }
+
+  {
+    parsing_context.currentIndex = 14;
+    maybe_parsed_number_t result = parse_number(&parsing_context);
+
+    assert(result.ok && "Deveria parsear corretamente");
+    assert(result.literal_form != NULL && strlen(result.literal_form) && "A forma literal deve ser uma string não vazia");
+    assert(result.number == 255 && "O número esperado era");
+  }
+
+  {
+    parsing_context.currentIndex = 18;
+    maybe_parsed_number_t result = parse_number(&parsing_context);
+
+    assert(result.ok == false && "Não deveria parsear nada");
+    assert(result.error_message != NULL && strlen(result.error_message) && "A mensagem de erro deve ser uma string não vazia");
+  }
+
+  {
+    parsing_context.currentIndex = 22;
+    maybe_parsed_number_t result = parse_number(&parsing_context);
+
+    assert(result.ok == false && "Não deveria parsear nada");
+    assert(result.error_message != NULL && strlen(result.error_message) && "A mensagem de erro deve ser uma string não vazia");
+  }
+}
+
 void test_parseando_um_programa_simples()
 {
   const char *text = "  .teste PUSH 25\n PUSH   50\nPLUS 0\n";
@@ -107,6 +195,7 @@ void test_cases(void)
   test_number_literal_as_number();
   test_char_literal_as_number();
   test_skip_whitespace();
+  test_parse_number();
 }
 
 int main(void)
