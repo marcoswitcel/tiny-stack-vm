@@ -614,7 +614,7 @@ bool write_program_out(const char *file_path, stack_instruction_line_t *stack)
 {
   if (stack->count == 0)
   {
-    fprintf(stderr, "programa vazio não gerado");
+    fprintf(stderr, "programa vazio não gerado\n");
     return false;
   }
 
