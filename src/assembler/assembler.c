@@ -274,8 +274,12 @@ maybe_parsed_number_t parse_number(const parsing_context_t *parsing_context)
       maybe_number.error_message = "Número inválido, não pode começar com zero";
     }
   }
+  else
+  {
+    maybe_number.error_message = "Número inválido, não há um dígito no endereço atual";
+  }
 
-  maybe_number.error_message = "Número inválido, não há um dígito no endereço atual";
+  assert(maybe_number.ok || (maybe_number.error_message != NULL && strlen(maybe_number.error_message) && "A mensagem de erro deve ser defina antes de retorna"));
   return maybe_number;
 }
 
@@ -490,7 +494,7 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     else
     {
       // @todo João, aqui retorna o nome da instrução que estava sendo parseada
-      maybe_instruction_line.error_message = "Esperava um número";
+      maybe_instruction_line.error_message = maybe_number.error_message;
       maybe_instruction_line.matched = false;
       return maybe_instruction_line;
     }
