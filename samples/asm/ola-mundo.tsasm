@@ -6,7 +6,7 @@ JUMP 32
     WRITE 0 POP 0
     'a'
     WRITE 0 POP 0
-    '\n'
+    ' '
     WRITE 0 POP 0    
     'm'
     WRITE 0 POP 0

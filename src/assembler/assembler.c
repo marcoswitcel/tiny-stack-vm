@@ -308,7 +308,7 @@ maybe_parsed_number_t parse_char(const parsing_context_t *parsing_context)
   {
     GET_NEXT_CHAR;
 
-    if (isprint(current_char) && !is_whitespace(current_char) && current_char != '\'')
+    if (isprint(current_char) && current_char != '\'')
     {
       if (current_char == '\\')
       {

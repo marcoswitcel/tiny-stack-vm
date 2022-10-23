@@ -21,7 +21,7 @@
 - [ ] Melhorar as informações providas pelo assembler quando o programa contém algum erro sintático
 
 ## Bugs
-- [ ] Char literal não está aceitando espaço
+- [x] Char literal não está aceitando espaço
 - [ ] o comando "CALL 1" quando na última linha e sem espaço ou enter após está retornado "esperava um número" ao invés de parsear corretamente
 
 
