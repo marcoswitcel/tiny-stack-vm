@@ -34,7 +34,7 @@ int main(int argc, const char *argv[])
   command_line_args.verbose = is_string_present_in_argv("--verbose", argc, argv);
   command_line_args.dump_stack = is_string_present_in_argv("--dump-stack", argc, argv);
   command_line_args.execution_info = is_string_present_in_argv("--execution-info", argc, argv);
-  command_line_args.limit_instruction = is_string_present_in_argv("--limit-ticks", argc, argv);
+  command_line_args.limit_instruction = is_string_present_in_argv("--limit-ticks", argc, argv); // @todo João, permitir passar um inteiro para customizar o número de instruções limite
 
   if (argc < 2) {
     printf("Forma de uso:\nvm <caminho-para-o-programa>\n");
