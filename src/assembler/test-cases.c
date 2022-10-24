@@ -124,7 +124,7 @@ void test_parse_number(void)
 
 void test_parseando_um_programa_simples()
 {
-  const char *text = "  .teste PUSH 25\n PUSH   50\nPLUS 0\n";
+  const char *text = "  .teste PUSH 25\n PUSH   50\nPLUS 0 'o' 'l' PUSH 'a' ' ' \n";
 
   parsing_context_t parsing_context = {
     .source = text,

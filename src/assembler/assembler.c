@@ -484,7 +484,10 @@ maybe_instruction_line_t parse_instruction_line(parsing_context_t *parsing_conte
     skip_whitespace(parsing_context);
 
     // @todo João, ajustar para usar a função `parse_char` aqui também
-    maybe_parsed_number_t maybe_number = parse_number(parsing_context);
+    char local_current_value = *get_current_address(parsing_context);
+    maybe_parsed_number_t maybe_number = (local_current_value == CHAR_LITERAL_QUOTE)
+      ? parse_char(parsing_context)
+      : parse_number(parsing_context);
 
     if (maybe_number.ok)
     {
