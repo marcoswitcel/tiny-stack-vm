@@ -291,6 +291,7 @@ static const char CHAR_LITERAL_QUOTE = '\'';
 /**
  * @brief Função que define e parseia um caractere literal
  * @todo João, desenvolver testes para essa funcionalidade
+ * @todo João, falta \\ \' \t \r \0 e outros, melhorar testes quando implementar as representações anteriores
  * 
  * @param parsing_context 
  * @return maybe_parsed_number_t 

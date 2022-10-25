@@ -122,6 +122,60 @@ void test_parse_number(void)
   }
 }
 
+void test_parse_char(void)
+{
+  const char *source = "    'a' '\n' '\\n' 'Z'";
+
+  parsing_context_t parsing_context = {
+    .source = source,
+    .currentIndex = 0,
+    .source_length = strlen(source),
+  };
+
+  {
+    parsing_context.currentIndex = 0;
+    maybe_parsed_number_t result = parse_char(&parsing_context);
+
+    assert(result.ok == false && "Não deveria parsear nada");
+    assert(result.error_message != NULL && strlen(result.error_message) && "A mensagem de erro deve ser uma string não vazia");
+  }
+
+  {
+    parsing_context.currentIndex = 4;
+    maybe_parsed_number_t result = parse_char(&parsing_context);
+
+    assert(result.ok && "Deveria parsear corretamente");
+    assert(result.literal_form != NULL && strlen(result.literal_form) && "A forma literal deve ser uma string não vazia");
+    assert(result.number == 'a' && "O número esperado era");
+  }
+
+  {
+    parsing_context.currentIndex = 8;
+    maybe_parsed_number_t result = parse_char(&parsing_context);
+
+    assert(result.ok == false && "Não deveria parsear nada");
+    assert(result.error_message != NULL && strlen(result.error_message) && "A mensagem de erro deve ser uma string não vazia");
+  }
+
+  {
+    parsing_context.currentIndex = 12;
+    maybe_parsed_number_t result = parse_char(&parsing_context);
+
+    assert(result.ok && "Deveria parsear corretamente");
+    assert(result.literal_form != NULL && strlen(result.literal_form) && "A forma literal deve ser uma string não vazia");
+    assert(result.number == '\n' && "O número esperado era");
+  }
+
+  {
+    parsing_context.currentIndex = 17;
+    maybe_parsed_number_t result = parse_char(&parsing_context);
+
+    assert(result.ok && "Deveria parsear corretamente");
+    assert(result.literal_form != NULL && strlen(result.literal_form) && "A forma literal deve ser uma string não vazia");
+    assert(result.number == 'Z' && "O número esperado era");
+  }
+}
+
 void test_parseando_um_programa_simples()
 {
   const char *text = "  .teste PUSH 25\n PUSH   50\nPLUS 0 'o' 'l' PUSH 'a' ' ' \n";
@@ -196,6 +250,7 @@ void test_cases(void)
   test_char_literal_as_number();
   test_skip_whitespace();
   test_parse_number();
+  test_parse_char();
 }
 
 int main(void)
